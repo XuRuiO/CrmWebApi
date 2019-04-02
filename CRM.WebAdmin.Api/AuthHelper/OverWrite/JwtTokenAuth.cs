@@ -33,7 +33,7 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
             //序列化token，获取授权
             TokenModelJWT modelJWT = JwtHelper.SerializeJWT(tokenHeader);
 
-            //授权
+            //授权 注意这个可以添加多个角色声明，请注意这是一个 list
             var claimList = new List<Claim>();
             var claim = new Claim(ClaimTypes.Role, modelJWT.Role);
             claimList.Add(claim);

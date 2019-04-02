@@ -5,7 +5,7 @@ using System.Text;
 namespace CRM.Core.ConvertHelper
 {
     /// <summary>
-    /// 2018.12.20      Rui     数据类型转换
+    /// 2018.12.20      Rui     数据类型转换（扩展方法）
     /// </summary>
     public static class UtilConvert
     {

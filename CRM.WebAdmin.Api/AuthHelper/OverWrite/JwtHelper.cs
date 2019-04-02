@@ -13,6 +13,7 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
     /// </summary>
     public class JwtHelper
     {
+        //定义一个私钥
         public static string secreKey { get; set; } = "sdfsdfsrty45634kkhllghtdgdfss345t678fs";
 
         /// <summary>
