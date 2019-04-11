@@ -9,4 +9,8 @@
     <NoWarn>1701;1702;1591;</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="sqlSugarCore" Version="4.9.9.7" />
+  </ItemGroup>
+
 </Project>

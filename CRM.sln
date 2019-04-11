@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01-实体层", "01-实体层", "{4F97F8F0-7A87-479B-AE6D-9C189F30F1A9}"
 EndProject
@@ -21,13 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.Freamwork", "CRM.Freamw
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.WebAdmin.Api", "CRM.WebAdmin.Api\CRM.WebAdmin.Api.csproj", "{E2040890-0E20-4A92-B9A3-300D85E81EB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRM.IRepository", "CRM.IRepository\CRM.IRepository.csproj", "{D9FCBD50-569D-496C-879A-707CA2864830}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.IRepository", "CRM.IRepository\CRM.IRepository.csproj", "{D9FCBD50-569D-496C-879A-707CA2864830}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRM.Repository", "CRM.Repository\CRM.Repository.csproj", "{953A12E1-0EAB-45D5-B32A-ADBCE386D176}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.Repository", "CRM.Repository\CRM.Repository.csproj", "{953A12E1-0EAB-45D5-B32A-ADBCE386D176}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRM.IService", "CRM.IService\CRM.IService.csproj", "{417A6541-C054-4B2F-B797-C54C73340E98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.IService", "CRM.IService\CRM.IService.csproj", "{417A6541-C054-4B2F-B797-C54C73340E98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRM.Service", "CRM.Service\CRM.Service.csproj", "{4E448829-C2ED-4354-AC91-8B424CD85F18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.Service", "CRM.Service\CRM.Service.csproj", "{4E448829-C2ED-4354-AC91-8B424CD85F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

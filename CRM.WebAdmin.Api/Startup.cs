@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CRM.Core.Helpers;
 using CRM.Freamwork.GlobalRouting;
 using CRM.Freamwork.Swagger;
 using CRM.WebAdmin.Api.AuthHelper.OverWrite;
@@ -71,6 +72,12 @@ namespace CRM.WebAdmin.Api
             {
                 app.UseHsts();
             }
+
+            #region 2019.04.10      Rui     获取appsettings.json中自定义节点AppSettings的配置文件
+
+            AppSettingsHelper.SetSection(Configuration.GetSection("AppSettings"));
+
+            #endregion
 
             #region 2018.11.11      Rui     使用Swagger
 

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CRM.Core.ConvertHelper
+namespace CRM.Core.Helpers
 {
     /// <summary>
-    /// 2018.12.20      Rui     数据类型转换（扩展方法）
+    /// 2018.12.20      Rui     扩展方法帮助类
     /// </summary>
-    public static class UtilConvert
+    public static class ExtensionMethodsHelper
     {
         /// <summary>
         /// object 转换成 Int
