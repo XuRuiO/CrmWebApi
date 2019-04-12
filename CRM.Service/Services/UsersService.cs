@@ -24,5 +24,25 @@ namespace CRM.Service.Services
 
             return result ? (true, "新增成功！") : (false, "新增失败！");
         }
+
+        public async Task<(bool result, string message)> AddListUsers(List<UsersAddInput> addInputs)
+        {
+            var usersModelList = new List<UsersModel>();
+
+            foreach (var item in addInputs)
+            {
+                var usersModel = new UsersModel()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = item.Name
+                };
+
+                usersModelList.Add(usersModel);
+            }
+
+            var result = await baseDal.AddList(usersModelList, SqlSugarEnums.SqlSugarAddReturnAction.IdentityIntoEntity);
+
+            return result ? (true, "新增成功！") : (false, "新增失败！");
+        }
     }
 }

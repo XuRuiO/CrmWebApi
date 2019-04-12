@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace CRM.Core.Models
@@ -9,6 +10,9 @@ namespace CRM.Core.Models
     /// </summary>
     public class SqlSugarEnums
     {
+        /// <summary>
+        /// SqlSugar新增后动作
+        /// </summary>
         public enum SqlSugarAddReturnAction
         {
             /// <summary>
@@ -32,5 +36,24 @@ namespace CRM.Core.Models
             /// </summary>
             IdentityIntoEntity = 5
         }
+
+
+    }
+
+    /// <summary>
+    /// SqlSugarJoin实体类（排序）
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class SqlSugarOrder<T>
+    {
+        /// <summary>
+        /// 排序表达式
+        /// </summary>
+        public Expression<Func<T, object>> OrderExpn { get; set; }
+
+        /// <summary>
+        /// 是否降序
+        /// </summary>
+        public bool isDesc { get; set; } = true;
     }
 }

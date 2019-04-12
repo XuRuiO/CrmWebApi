@@ -21,11 +21,25 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <summary>
         /// 新增用户
         /// </summary>
+        /// <param name="addInput"></param>
         /// <returns></returns>
         [HttpPost("AddUsers")]
-        public async Task<(bool result, string message)> AddUsers([FromBody] UsersAddInput addInput)
+        public async Task<(bool result, string message)> AddUsers([FromBody]UsersAddInput addInput)
         {
             var result = await usersService.AddUsers(addInput);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 批量新增用户
+        /// </summary>
+        /// <param name="addInputs"></param>
+        /// <returns></returns>
+        [HttpPost("AddListUsers")]
+        public async Task<(bool result, string message)> AddListUsers([FromBody]List<UsersAddInput> addInputs)
+        {
+            var result = await usersService.AddListUsers(addInputs);
 
             return result;
         }

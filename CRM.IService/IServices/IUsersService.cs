@@ -11,5 +11,7 @@ namespace CRM.IService.IServices
     public interface IUsersService : IBaseService<UsersModel>
     {
         Task<(bool result, string message)> AddUsers(UsersAddInput addInput);
+
+        Task<(bool result, string message)> AddListUsers(List<UsersAddInput> addInputs);
     }
 }
