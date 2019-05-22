@@ -22,7 +22,7 @@ namespace CRM.IService.IBase
         /// <param name="returnAction">新增时，返回动作</param>
         /// <param name="allowColumns">允许指定插入的列</param>
         /// <returns></returns>
-        Task<dynamic> Add(T model, SqlSugarEnums.SqlSugarAddReturnAction returnAction, Expression<Func<T, object>> allowColumns = null);
+        Task<dynamic> AddAsync(T model, SqlSugarEnums.SqlSugarAddReturnAction returnAction, Expression<Func<T, object>> allowColumns = null);
 
         /// <summary>
         /// 新增操作（批量新增）
@@ -30,7 +30,7 @@ namespace CRM.IService.IBase
         /// <param name="model">实体类</param>
         /// <param name="returnAction">新增时，返回动作</param>
         /// <param name="allowColumns">允许指定插入的列</param>
-        Task<dynamic> AddList(List<T> model, SqlSugarEnums.SqlSugarAddReturnAction returnAction, Expression<Func<T, object>> allowColumns = null);
+        Task<dynamic> AddListAsync(List<T> model, SqlSugarEnums.SqlSugarAddReturnAction returnAction, Expression<Func<T, object>> allowColumns = null);
 
         #endregion
 
@@ -42,7 +42,7 @@ namespace CRM.IService.IBase
         /// <param name="model">实体类</param>
         /// <param name="allowColumns">允许指定更新的列</param>
         /// <returns></returns>
-        Task<bool> Update(T model, Expression<Func<T, object>> allowColumns);
+        Task<bool> UpdateAsync(T model, Expression<Func<T, object>> allowColumns);
 
         /// <summary>
         /// 更新操作（批量更新），根据实体更新（主键要有值，主键是更新条件）
@@ -50,7 +50,7 @@ namespace CRM.IService.IBase
         /// <param name="model">实体类</param>
         /// <param name="allowColumns">允许指定更新的列</param>
         /// <returns></returns>
-        Task<bool> UpdateList(List<T> model, Expression<Func<T, object>> allowColumns);
+        Task<bool> UpdateListAsync(List<T> model, Expression<Func<T, object>> allowColumns);
 
         /// <summary>
         /// 更新操作，根据条件进行更新
@@ -59,7 +59,7 @@ namespace CRM.IService.IBase
         /// <param name="where">更新条件</param>
         /// <param name="allowColumns">允许指定更新的列</param>
         /// <returns></returns>
-        Task<bool> UpdateByWhere(T model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns);
+        Task<bool> UpdateByWhereAsync(T model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns);
 
         /// <summary>
         /// 更新操作（批量更新），根据条件进行更新
@@ -68,7 +68,7 @@ namespace CRM.IService.IBase
         /// <param name="where">更新条件</param>
         /// <param name="allowColumns">允许指定更新的列</param>
         /// <returns></returns>
-        Task<bool> UpdateListByWhere(List<T> model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns);
+        Task<bool> UpdateListByWhereAsync(List<T> model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns);
 
         #endregion
 
@@ -79,18 +79,26 @@ namespace CRM.IService.IBase
         /// </summary>
         /// <param name="where">删除条件</param>
         /// <returns></returns>
-        Task<bool> DeleteTrue(Expression<Func<T, bool>> where);
+        Task<bool> DeleteTrueAsync(Expression<Func<T, bool>> where);
 
         /// <summary>
         /// 假删除操作，实际是根据实体更新（主键要有值，主键是更新条件），更新指定列
         /// </summary>
         /// <param name="model">实体类</param>
         /// <returns></returns>
-        Task<bool> DeleteFalse(T model);
+        Task<bool> DeleteFalseAsync(T model);
 
         #endregion
 
         #region 查询操作
+
+        /// <summary>
+        /// 查询数量
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        Task<long> QueryCountAsync(Expression<Func<T, bool>> where, bool isNoLock = true);
 
         /// <summary>
         /// 查询单条
@@ -98,7 +106,7 @@ namespace CRM.IService.IBase
         /// <param name="where">查询条件</param>
         /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        Task<T> QueryFirst(Expression<Func<T, bool>> where, bool isNoLock = true);
+        Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, bool isNoLock = true);
 
         /// <summary>
         /// 查询单条，可以根据条件排序
@@ -107,7 +115,31 @@ namespace CRM.IService.IBase
         /// <param name="orders">排序条件</param>
         /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        Task<T> QueryFirst(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true);
+        Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true);
+
+        /// <summary>
+        /// 查询全部
+        /// </summary>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        Task<List<T>> QueryAllAsync(bool isNoLock = true);
+
+        /// <summary>
+        /// 查询全部
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, bool isNoLock = true);
+
+        /// <summary>
+        /// 查询全部
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="orders">排序条件</param>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true);
 
         #endregion
     }

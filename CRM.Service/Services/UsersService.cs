@@ -12,7 +12,7 @@ namespace CRM.Service.Services
 {
     public class UsersService : BaseService<UsersModel>, IUsersService
     {
-        public async Task<(bool result, string message)> AddUsers(UsersAddInput addInput)
+        public async Task<(bool result, string message)> AddUsersAsync(UsersAddInput addInput)
         {
             var usersModel = new UsersModel()
             {
@@ -20,12 +20,12 @@ namespace CRM.Service.Services
                 Name = addInput.Name
             };
 
-            var result = await baseDal.Add(usersModel, SqlSugarEnums.SqlSugarAddReturnAction.IdentityIntoEntity);
+            var result = await baseDal.AddAsync(usersModel, SqlSugarEnums.SqlSugarAddReturnAction.IdentityIntoEntity);
 
             return result ? (true, "新增成功！") : (false, "新增失败！");
         }
 
-        public async Task<(bool result, string message)> AddListUsers(List<UsersAddInput> addInputs)
+        public async Task<(bool result, string message)> AddListUsersAsync(List<UsersAddInput> addInputs)
         {
             var usersModelList = new List<UsersModel>();
 
@@ -40,7 +40,7 @@ namespace CRM.Service.Services
                 usersModelList.Add(usersModel);
             }
 
-            var result = await baseDal.AddList(usersModelList, SqlSugarEnums.SqlSugarAddReturnAction.IdentityIntoEntity);
+            var result = await baseDal.AddListAsync(usersModelList, SqlSugarEnums.SqlSugarAddReturnAction.IdentityIntoEntity);
 
             return result ? (true, "新增成功！") : (false, "新增失败！");
         }

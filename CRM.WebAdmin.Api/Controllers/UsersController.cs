@@ -26,7 +26,7 @@ namespace CRM.WebAdmin.Api.Controllers
         [HttpPost("AddUsers")]
         public async Task<(bool result, string message)> AddUsers([FromBody]UsersAddInput addInput)
         {
-            var result = await usersService.AddUsers(addInput);
+            var result = await usersService.AddUsersAsync(addInput);
 
             return result;
         }
@@ -39,7 +39,7 @@ namespace CRM.WebAdmin.Api.Controllers
         [HttpPost("AddListUsers")]
         public async Task<(bool result, string message)> AddListUsers([FromBody]List<UsersAddInput> addInputs)
         {
-            var result = await usersService.AddListUsers(addInputs);
+            var result = await usersService.AddListUsersAsync(addInputs);
 
             return result;
         }

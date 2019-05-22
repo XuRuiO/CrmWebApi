@@ -39,7 +39,7 @@ namespace CRM.Repository.Base
         /// <param name="returnAction">新增时，返回动作</param>
         /// <param name="allowColumns">允许指定插入的列</param>
         /// <returns></returns>
-        public async Task<dynamic> Add(T model, SqlSugarEnums.SqlSugarAddReturnAction returnAction, Expression<Func<T, object>> allowColumns = null)
+        public async Task<dynamic> AddAsync(T model, SqlSugarEnums.SqlSugarAddReturnAction returnAction, Expression<Func<T, object>> allowColumns = null)
         {
             switch (returnAction)
             {
@@ -77,7 +77,7 @@ namespace CRM.Repository.Base
         /// <param name="returnAction">新增时，返回动作</param>
         /// <param name="allowColumns">允许指定插入的列</param>
         /// <returns></returns>
-        public async Task<dynamic> AddList(List<T> model, SqlSugarEnums.SqlSugarAddReturnAction returnAction, Expression<Func<T, object>> allowColumns = null)
+        public async Task<dynamic> AddListAsync(List<T> model, SqlSugarEnums.SqlSugarAddReturnAction returnAction, Expression<Func<T, object>> allowColumns = null)
         {
             switch (returnAction)
             {
@@ -118,7 +118,7 @@ namespace CRM.Repository.Base
         /// <param name="model">实体类</param>
         /// <param name="allowColumns">允许指定更新的列</param>
         /// <returns></returns>
-        public async Task<bool> Update(T model, Expression<Func<T, object>> allowColumns)
+        public async Task<bool> UpdateAsync(T model, Expression<Func<T, object>> allowColumns)
         {
             var sugarUpdate = await Task.Run(() => db.Updateable(model));
             if (allowColumns != null)
@@ -135,7 +135,7 @@ namespace CRM.Repository.Base
         /// <param name="model">实体类</param>
         /// <param name="allowColumns">允许指定更新的列</param>
         /// <returns></returns>
-        public async Task<bool> UpdateList(List<T> model, Expression<Func<T, object>> allowColumns)
+        public async Task<bool> UpdateListAsync(List<T> model, Expression<Func<T, object>> allowColumns)
         {
             var sugarUpdate = await Task.Run(() => db.Updateable(model));
             if (allowColumns != null)
@@ -153,7 +153,7 @@ namespace CRM.Repository.Base
         /// <param name="where">更新条件</param>
         /// <param name="allowColumns">允许指定更新的列</param>
         /// <returns></returns>
-        public async Task<bool> UpdateByWhere(T model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns)
+        public async Task<bool> UpdateByWhereAsync(T model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns)
         {
             var sugarUpdate = await Task.Run(() => db.Updateable(model));
             if (allowColumns != null)
@@ -171,7 +171,7 @@ namespace CRM.Repository.Base
         /// <param name="where">更新条件</param>
         /// <param name="allowColumns">允许指定更新的列</param>
         /// <returns></returns>
-        public async Task<bool> UpdateListByWhere(List<T> model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns)
+        public async Task<bool> UpdateListByWhereAsync(List<T> model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns)
         {
             var sugarUpdate = await Task.Run(() => db.Updateable(model));
             if (allowColumns != null)
@@ -191,7 +191,7 @@ namespace CRM.Repository.Base
         /// </summary>
         /// <param name="where">删除条件</param>
         /// <returns></returns>
-        public async Task<bool> DeleteTrue(Expression<Func<T, bool>> where)
+        public async Task<bool> DeleteTrueAsync(Expression<Func<T, bool>> where)
         {
             return await db.Deleteable<T>(where).ExecuteCommandAsync() > 0;
         }
@@ -201,7 +201,7 @@ namespace CRM.Repository.Base
         /// </summary>
         /// <param name="model">实体类</param>
         /// <returns></returns>
-        public async Task<bool> DeleteFalse(T model)
+        public async Task<bool> DeleteFalseAsync(T model)
         {
             return await db.Updateable(model).ExecuteCommandAsync() > 0;
         }
@@ -211,12 +211,12 @@ namespace CRM.Repository.Base
         #region 查询操作
 
         /// <summary>
-        /// 查询单条
+        /// 查询数量
         /// </summary>
         /// <param name="where">查询条件</param>
         /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        public async Task<T> QueryFirst(Expression<Func<T, bool>> where, bool isNoLock = true)
+        public async Task<long> QueryCountAsync(Expression<Func<T, bool>> where, bool isNoLock = true)
         {
             var query = await Task.Run(() => db.Queryable<T>());
 
@@ -225,7 +225,25 @@ namespace CRM.Repository.Base
                 query = await Task.Run(() => query.With(SqlWith.NoLock));
             }
 
-            return await query.FirstAsync(where);
+            return await query.Where(where).CountAsync();
+        }
+
+        /// <summary>
+        /// 查询单条
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, bool isNoLock = true)
+        {
+            var query = await Task.Run(() => db.Queryable<T>());
+
+            if (isNoLock)
+            {
+                query = await Task.Run(() => query.With(SqlWith.NoLock));
+            }
+
+            return await query.Where(where).FirstAsync();
         }
 
         /// <summary>
@@ -235,7 +253,7 @@ namespace CRM.Repository.Base
         /// <param name="orders">排序条件</param>
         /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        public async Task<T> QueryFirst(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true)
+        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true)
         {
             var query = await Task.Run(() => db.Queryable<T>());
 
@@ -244,12 +262,75 @@ namespace CRM.Repository.Base
                 query = await Task.Run(() => query.With(SqlWith.NoLock));
             }
 
+            query = await Task.Run(() => query.Where(where));
+
             if (orders != null)
             {
                 query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.isDesc ? OrderByType.Desc : OrderByType.Asc)));
             }
 
             return await query.FirstAsync();
+        }
+
+        /// <summary>
+        /// 查询全部
+        /// </summary>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        public async Task<List<T>> QueryAllAsync(bool isNoLock = true)
+        {
+            var query = await Task.Run(() => db.Queryable<T>());
+
+            if (isNoLock)
+            {
+                query = await Task.Run(() => query.With(SqlWith.NoLock));
+            }
+
+            return await query.ToListAsync();
+        }
+
+        /// <summary>
+        /// 查询全部
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, bool isNoLock = true)
+        {
+            var query = await Task.Run(() => db.Queryable<T>());
+
+            if (isNoLock)
+            {
+                query = await Task.Run(() => query.With(SqlWith.NoLock));
+            }
+
+            return await query.Where(where).ToListAsync();
+        }
+
+        /// <summary>
+        /// 查询全部
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="orders">排序条件</param>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true)
+        {
+            var query = await Task.Run(() => db.Queryable<T>());
+
+            if (isNoLock)
+            {
+                query = await Task.Run(() => query.With(SqlWith.NoLock));
+            }
+
+            query = await Task.Run(() => query.Where(where));
+
+            if (orders != null)
+            {
+                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.isDesc ? OrderByType.Desc : OrderByType.Asc)));
+            }
+
+            return await query.ToListAsync();
         }
 
         #endregion
