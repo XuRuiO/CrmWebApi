@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CRM.Core.Helpers;
+using CRM.Freamwork.Autofac;
 using CRM.Freamwork.GlobalRouting;
 using CRM.Freamwork.Swagger;
 using CRM.WebAdmin.Api.AuthHelper.OverWrite;
@@ -28,13 +29,13 @@ namespace CRM.WebAdmin.Api
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             //注册Mvc到Container
             services.AddMvc(options =>
             {
-                //路由参数在此处仍然是有效的，比如添加一个版本号
-                options.UseCentralRoutePrefix(new RouteAttribute("v1"));
+                //路由参数在此处仍然是有效的，比如添加一个版本号，不需要可以注释
+                //options.UseCentralRoutePrefix(new RouteAttribute("v1"));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             #region 2018.11.11      Rui     添加Swagger自定义配置
@@ -58,6 +59,12 @@ namespace CRM.WebAdmin.Api
             });
 
             #endregion 2018.12.11      Rui     Token服务注册
+
+            #region 2019.05.27      Rui     依赖注入Autofac
+
+            return services.AddAutofacCRM();
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

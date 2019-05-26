@@ -56,4 +56,25 @@ namespace CRM.Core.Models
         /// </summary>
         public bool isDesc { get; set; } = true;
     }
+
+    /// <summary>
+    /// 分页信息
+    /// </summary>
+    public class SqlSugarPageInfo
+    {
+        /// <summary>
+        /// 页码
+        /// </summary>
+        public int PageIndex { get; set; }
+
+        /// <summary>
+        /// 页数
+        /// </summary>
+        public int PageSize { get; set; }
+
+        /// <summary>
+        /// 总记录数
+        /// </summary>
+        public int TotalCount { get; set; }
+    }
 }

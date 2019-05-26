@@ -6,7 +6,10 @@ using System.Text;
 
 namespace CRM.Freamwork.GlobalRouting
 {
-    public static class MvcOptionsExtensions
+    /// <summary>
+    /// 2018.12.02  Rui     自定义全局路由统一前缀
+    /// </summary>
+    public static class MvcOptionsExtension
     {
         public static void UseCentralRoutePrefix(this MvcOptions options, IRouteTemplateProvider routeTemplate)
         {

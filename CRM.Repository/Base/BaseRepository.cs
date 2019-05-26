@@ -333,6 +333,36 @@ namespace CRM.Repository.Base
             return await query.ToListAsync();
         }
 
+        /// <summary>
+        /// 条件分页查询，单表
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="pageInfo">分页信息</param>
+        /// <param name="orders">排序条件</param>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null, bool isNoLock = true)
+        {
+            var query = await Task.Run(() => db.Queryable<T>());
+
+            if (isNoLock)
+            {
+                query = await Task.Run(() => query.With(SqlWith.NoLock));
+            }
+
+            if (where != null)
+            {
+                query = await Task.Run(() => query.Where(where));
+            }
+
+            if (orders != null)
+            {
+                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.isDesc ? OrderByType.Desc : OrderByType.Asc)));
+            }
+
+            return await query.ToPageListAsync(pageInfo.PageIndex, pageInfo.PageSize, pageInfo.TotalCount);
+        }
+
         #endregion
     }
 }

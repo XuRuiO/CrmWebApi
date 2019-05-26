@@ -142,6 +142,16 @@ namespace CRM.IRepository.IBase
         /// <returns></returns>
         Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true);
 
+        /// <summary>
+        /// 条件分页查询，单表
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="pageInfo">分页信息</param>
+        /// <param name="orders">排序条件</param>
+        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <returns></returns>
+        Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null, bool isNoLock = true);
+
         #endregion
     }
 }

@@ -16,7 +16,14 @@ namespace CRM.WebAdmin.Api.Controllers
     public class UsersController : ControllerBase
     {
         //采用autoioc注入时，将控制器引用的依赖项 CRM.Service 去掉
-        public IUsersService usersService = new UsersService();
+        //public IUsersService usersService = new UsersService();
+
+        private IUsersService usersService;
+
+        public UsersController(IUsersService usersService)
+        {
+            this.usersService = usersService;
+        }
 
         /// <summary>
         /// 新增用户

@@ -8,7 +8,7 @@ using System.Text;
 namespace CRM.Freamwork.GlobalRouting
 {
     /// <summary>
-    /// 2018.12.2  Rui
+    /// 2018.12.02  Rui
     /// 定义个类RouteConvention，实现 IApplicationModelConvention 接口，添加全局路由统一前缀。
     /// 参考链接：https://www.cnblogs.com/savorboard/p/dontnet-IApplicationModelConvention.html
     /// </summary>
