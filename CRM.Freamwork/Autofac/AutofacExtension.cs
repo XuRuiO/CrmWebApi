@@ -34,7 +34,8 @@ namespace CRM.Freamwork.Autofac
                 //获取注入项目绝对路径
                 var repositorysAndServicesDllFile = Path.Combine(basePath, assemblysName);
                 //直接采用加载文件的方法
-                var assemblysRepositorysAndServices = Assembly.LoadFile(repositorysAndServicesDllFile);
+                var assemblysRepositorysAndServices = Assembly.LoadFrom(repositorysAndServicesDllFile);
+
                 //AsImplementedInterfaces:指明创建的stypes这个集合中所有类的对象实例，以其接口的形式保存。
                 builder.RegisterAssemblyTypes(assemblysRepositorysAndServices).AsImplementedInterfaces();
             }
