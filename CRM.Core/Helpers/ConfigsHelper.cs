@@ -27,5 +27,14 @@ namespace CRM.Core.Helpers
         {
             return TypeConversionHelper.StringToBool(AppSettingsHelper.AppSetting("IsEnableSqlSugarLog"));
         }
+
+        /// <summary>
+        /// 获取AutoFac注入的应用程序集名称
+        /// </summary>
+        /// <returns></returns>
+        public static string GetAutoFacAssemblyName()
+        {
+            return AppSettingsHelper.AppSetting("AutoFacAssemblyName");
+        }
     }
 }

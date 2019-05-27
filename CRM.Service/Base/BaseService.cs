@@ -1,7 +1,6 @@
 ﻿using CRM.Core.Models;
 using CRM.IRepository.IBase;
 using CRM.IService.IBase;
-using CRM.Repository.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -16,8 +15,8 @@ namespace CRM.Service.Base
     /// <typeparam name="T"></typeparam>
     public class BaseService<T> : IBaseService<T> where T : class, new()
     {
-        //采用autoioc注入时，将控制器引用的依赖项 CRM.Repository 去掉
-        public IBaseRepository<T> baseDal = new BaseRepository<T>();
+        //通过在子类的构造函数中注入，这里是基类，不用构造函数
+        public IBaseRepository<T> baseDal;
 
         #region 新增操作
 

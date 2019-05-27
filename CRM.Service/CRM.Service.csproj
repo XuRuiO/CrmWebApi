@@ -1,13 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+    <OutputPath>..\CRM.WebAdmin.Api\bin\Debug\</OutputPath>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\CRM.IRepository\CRM.IRepository.csproj" />
     <ProjectReference Include="..\CRM.IService\CRM.IService.csproj" />
-    <ProjectReference Include="..\CRM.Repository\CRM.Repository.csproj" />
   </ItemGroup>
 
 </Project>

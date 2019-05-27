@@ -9,8 +9,7 @@ using System.Text;
 namespace CRM.Freamwork.Swagger
 {
     /// <summary>
-    /// 2018.10.22  Rui
-    /// Swagger 自定义配置
+    /// 2018.10.22    Rui       Swagger 自定义配置
     /// </summary>
     public static class SwaggerExtension
     {

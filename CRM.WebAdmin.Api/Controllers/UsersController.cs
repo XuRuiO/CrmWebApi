@@ -4,9 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CRM.IService.IServices;
 using CRM.Model.InputModels;
-using CRM.Model.Models;
-using CRM.Service.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRM.WebAdmin.Api.Controllers
@@ -15,11 +12,9 @@ namespace CRM.WebAdmin.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        //采用autoioc注入时，将控制器引用的依赖项 CRM.Service 去掉
-        //public IUsersService usersService = new UsersService();
-
         private IUsersService usersService;
 
+        //构造函数注入
         public UsersController(IUsersService usersService)
         {
             this.usersService = usersService;
@@ -49,6 +44,17 @@ namespace CRM.WebAdmin.Api.Controllers
             var result = await usersService.AddListUsersAsync(addInputs);
 
             return result;
+        }
+
+        /// <summary>
+        /// 获取名称
+        /// </summary>
+        /// <param name="aaa"></param>
+        /// <returns></returns>
+        [HttpGet("GetName")]
+        public async Task<string> GetName(string aaa)
+        {
+            return await Task.Run(() => aaa);
         }
     }
 }

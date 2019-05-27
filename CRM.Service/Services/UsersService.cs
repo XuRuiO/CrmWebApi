@@ -1,4 +1,5 @@
 ﻿using CRM.Core.Models;
+using CRM.IRepository.IRepositorys;
 using CRM.IService.IServices;
 using CRM.Model.InputModels;
 using CRM.Model.Models;
@@ -12,6 +13,14 @@ namespace CRM.Service.Services
 {
     public class UsersService : BaseService<UsersModel>, IUsersService
     {
+        private IUsersRepository usersRepository;
+
+        public UsersService(IUsersRepository usersRepository)
+        {
+            this.baseDal = usersRepository;
+            this.usersRepository = usersRepository;
+        }
+
         public async Task<(bool result, string message)> AddUsersAsync(UsersAddInput addInput)
         {
             var usersModel = new UsersModel()

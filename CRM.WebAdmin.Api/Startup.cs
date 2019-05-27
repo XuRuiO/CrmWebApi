@@ -24,6 +24,12 @@ namespace CRM.WebAdmin.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            #region 2019.04.10      Rui     获取appsettings.json中自定义节点AppSettings的配置文件
+
+            AppSettingsHelper.SetSection(Configuration.GetSection("AppSettings"));
+
+            #endregion
         }
 
         public IConfiguration Configuration { get; }
@@ -62,6 +68,7 @@ namespace CRM.WebAdmin.Api
 
             #region 2019.05.27      Rui     依赖注入Autofac
 
+            //让Autofac接管Starup中的ConfigureServices方法，记得修改返回类型IServiceProvider
             return services.AddAutofacCRM();
 
             #endregion
@@ -79,12 +86,6 @@ namespace CRM.WebAdmin.Api
             {
                 app.UseHsts();
             }
-
-            #region 2019.04.10      Rui     获取appsettings.json中自定义节点AppSettings的配置文件
-
-            AppSettingsHelper.SetSection(Configuration.GetSection("AppSettings"));
-
-            #endregion
 
             #region 2018.11.11      Rui     使用Swagger
 
