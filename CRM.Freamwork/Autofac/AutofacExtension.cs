@@ -34,6 +34,10 @@ namespace CRM.Freamwork.Autofac
                 //获取注入项目绝对路径
                 var repositorysAndServicesDllFile = Path.Combine(basePath, assemblysName);
                 //直接采用加载文件的方法
+                /*
+                  Assembly.LoadFile：只载入相应的dll文件，比如Assembly.LoadFile("a.dll")，则载入a.dll，假如a.dll中引用了b.dll的话，b.dll并不会被载入。
+                  Assembly.LoadFrom：则不一样，它会载入dll文件及其引用的其他dll，比如上面的例子，b.dll也会被载入。
+                 */
                 var assemblysRepositorysAndServices = Assembly.LoadFrom(repositorysAndServicesDllFile);
 
                 //AsImplementedInterfaces:指明创建的stypes这个集合中所有类的对象实例，以其接口的形式保存。
