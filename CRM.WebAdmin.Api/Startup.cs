@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CRM.Core.Helpers;
 using CRM.Freamwork.Autofac;
+using CRM.Freamwork.Cache.RedisCache;
 using CRM.Freamwork.GlobalRouting;
 using CRM.Freamwork.Swagger;
 using CRM.WebAdmin.Api.AuthHelper.OverWrite;
@@ -28,6 +29,12 @@ namespace CRM.WebAdmin.Api
             #region 2019.04.10      Rui     获取appsettings.json中自定义节点AppSettings的配置文件
 
             AppSettingsHelper.SetSection(Configuration.GetSection("AppSettings"));
+
+            #endregion
+
+            #region 2019.06.11      Rui     初始化CsRedis Sdk服务
+
+            RedisCacheManager.Initialization();
 
             #endregion
         }

@@ -54,7 +54,7 @@ namespace CRM.WebAdmin.Api.Controllers
         [HttpGet("GetName")]
         public async Task<string> GetName(string aaa)
         {
-            return await Task.Run(() => aaa);
+            return await Task.Run(() => RedisHelper.Get("User:67e5f521-7c0a-480f-9eb2-aa26d6632439"));
         }
     }
 }

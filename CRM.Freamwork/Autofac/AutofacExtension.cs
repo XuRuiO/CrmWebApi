@@ -37,6 +37,7 @@ namespace CRM.Freamwork.Autofac
             //第二步：告诉AutoFac容器，创建项目中的指定类的对象实例，以接口的形式存储（其实就是创建数据仓储层与业务逻辑层这两个程序集中所有类的对象实例，然后以其接口的形式保存到AutoFac容器内存中，当然如果有需要也可以创建其他程序集的所有类的对象实例，这个只需要我们指定就可以了）
             //获取项目路径
             var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
+
             //循环注入
             foreach (var assemblysName in ConfigsHelper.GetAutoFacAssemblyName().Split(','))
             {
@@ -57,10 +58,10 @@ namespace CRM.Freamwork.Autofac
             builder.Populate(services);
 
             //第四步：使用已进行的组件登记创建新容器
-            var ApplicationContainer = builder.Build();
+            var applicationContainer = builder.Build();
 
             //第五步：第三方IOC接管 core内置DI容器
-            return new AutofacServiceProvider(ApplicationContainer);
+            return new AutofacServiceProvider(applicationContainer);
         }
     }
 }

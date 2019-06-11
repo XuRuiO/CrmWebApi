@@ -20,7 +20,7 @@ namespace CRM.Core.Helpers
         }
 
         /// <summary>
-        /// 获取是否启用SqlSugar 打印sql日志功能
+        /// 获取是否启用SqlSugar打印sql日志功能
         /// </summary>
         /// <returns></returns>
         public static bool GetIsEnableSqlSugarLog()
@@ -35,6 +35,24 @@ namespace CRM.Core.Helpers
         public static string GetAutoFacAssemblyName()
         {
             return AppSettingsHelper.AppSetting("AutoFacAssemblyName");
+        }
+
+        /// <summary>
+        /// 获取是否启用RedisCache功能
+        /// </summary>
+        /// <returns></returns>
+        public static bool GetRedisCacheEnabled()
+        {
+            return TypeConversionHelper.StringToBool(AppSettingsHelper.AppSetting("Cache:RedisCache:Enabled"));
+        }
+
+        /// <summary>
+        /// 获取RedisCache连接字符串
+        /// </summary>
+        /// <returns></returns>
+        public static string GetRedisCacheConnectionString()
+        {
+            return AppSettingsHelper.AppSetting("Cache:RedisCache:ConnectionString");
         }
     }
 }
