@@ -34,7 +34,7 @@ namespace CRM.WebAdmin.Api
 
             #region 2019.06.11      Rui     初始化CsRedis Sdk服务
 
-            RedisCacheManager.Initialization();
+            RedisCacheExtension.Initialization();
 
             #endregion
         }
@@ -72,6 +72,35 @@ namespace CRM.WebAdmin.Api
             });
 
             #endregion 2018.12.11      Rui     Token服务注册
+
+            #region 2019.06.14      Rui     CORS跨域配置，声明策略
+
+            //声明策略，记得下边app中配置
+            services.AddCors(x =>
+            {
+                //方法一
+                //↓↓↓↓↓↓↓注意正式环境不要使用这种全开放的处理↓↓↓↓↓↓↓↓↓↓
+                //x.AddPolicy("AllRequests", policy =>
+                //{
+                //    policy
+                //    .AllowAnyOrigin()//允许任何源
+                //    .AllowAnyMethod()//允许任何方式
+                //    .AllowAnyHeader()//允许任何头
+                //    .AllowCredentials();//允许cookie
+                //});
+                //↑↑↑↑↑↑↑注意正式环境不要使用这种全开放的处理↑↑↑↑↑↑↑↑↑↑
+
+                //方法二，一般采用这种方法
+                x.AddPolicy("LimitRequests", policy =>
+                {
+                    policy
+                    .WithOrigins("http://127.0.0.1:1818")   //支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
+
+            #endregion
 
             #region 2019.05.27      Rui     依赖注入Autofac
 
@@ -112,6 +141,16 @@ namespace CRM.WebAdmin.Api
 
             //使用自定义的认证中间件
             app.UseMiddleware<JwtTokenAuth>();
+
+            #endregion
+
+            #region 2019.06.14      Rui     使用CORS配置
+
+            //跨域第一种方法
+            //app.UseCors(options => options.WithOrigins("http://localhost:8021").AllowAnyHeader().AllowAnyMethod());
+
+            //跨域第二种方法，将 CORS 中间件添加到 web 应用程序管线中, 以允许跨域请求。
+            app.UseCors("LimitRequests");
 
             #endregion
 
