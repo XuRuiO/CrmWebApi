@@ -51,28 +51,6 @@ namespace CRM.WebAdmin.Api
                 //options.UseCentralRoutePrefix(new RouteAttribute("v1"));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            #region 2018.11.11      Rui     添加Swagger自定义配置
-
-            services.AddSwaggerGenCRM();
-
-            #endregion 2018.11.11      Rui     添加Swagger自定义配置
-
-            #region 2018.12.11      Rui     Token服务注册
-
-            services.AddSingleton<IMemoryCache>(factory =>
-            {
-                var cache = new MemoryCache(new MemoryCacheOptions());
-                return cache;
-            });
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Client", policy => policy.RequireRole("Client").Build());
-                options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
-                options.AddPolicy("AdminOrClient", policy => policy.RequireRole("Admin,Client").Build());
-            });
-
-            #endregion 2018.12.11      Rui     Token服务注册
-
             #region 2019.06.14      Rui     CORS跨域配置，声明策略
 
             //声明策略，记得下边app中配置
@@ -102,6 +80,28 @@ namespace CRM.WebAdmin.Api
 
             #endregion
 
+            #region 2018.11.11      Rui     添加Swagger自定义配置
+
+            services.AddSwaggerGenCRM();
+
+            #endregion 2018.11.11      Rui     添加Swagger自定义配置
+
+            #region 2018.12.11      Rui     Token服务注册
+
+            services.AddSingleton<IMemoryCache>(factory =>
+            {
+                var cache = new MemoryCache(new MemoryCacheOptions());
+                return cache;
+            });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Client", policy => policy.RequireRole("Client").Build());
+                options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
+                options.AddPolicy("AdminOrClient", policy => policy.RequireRole("Admin,Client").Build());
+            });
+
+            #endregion 2018.12.11      Rui     Token服务注册
+
             #region 2019.05.27      Rui     依赖注入Autofac
 
             //让Autofac接管Starup中的ConfigureServices方法，记得修改返回类型IServiceProvider
@@ -123,7 +123,17 @@ namespace CRM.WebAdmin.Api
                 app.UseHsts();
             }
 
-            #region 2018.11.11      Rui     使用Swagger
+            #region 2019.06.14      Rui     使用CORS中间件
+
+            //跨域第一种方法
+            //app.UseCors(options => options.WithOrigins("http://localhost:8021").AllowAnyHeader().AllowAnyMethod());
+
+            //跨域第二种方法，将 CORS 中间件添加到 web 应用程序管线中, 以允许跨域请求。
+            app.UseCors("LimitRequests");
+
+            #endregion
+
+            #region 2018.11.11      Rui     使用Swagger中间件
 
             app.UseSwagger();
             app.UseSwaggerUI(option =>
@@ -141,16 +151,6 @@ namespace CRM.WebAdmin.Api
 
             //使用自定义的认证中间件
             app.UseMiddleware<JwtTokenAuth>();
-
-            #endregion
-
-            #region 2019.06.14      Rui     使用CORS配置
-
-            //跨域第一种方法
-            //app.UseCors(options => options.WithOrigins("http://localhost:8021").AllowAnyHeader().AllowAnyMethod());
-
-            //跨域第二种方法，将 CORS 中间件添加到 web 应用程序管线中, 以允许跨域请求。
-            app.UseCors("LimitRequests");
 
             #endregion
 
