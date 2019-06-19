@@ -208,7 +208,7 @@ namespace CRM.Repository.Base
 
         #endregion
 
-        #region 查询操作
+        #region 单表查询操作
 
         /// <summary>
         /// 查询数量

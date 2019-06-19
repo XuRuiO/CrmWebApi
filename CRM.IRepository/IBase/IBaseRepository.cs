@@ -91,7 +91,7 @@ namespace CRM.IRepository.IBase
 
         #endregion
 
-        #region 查询操作
+        #region 单表查询操作
 
         /// <summary>
         /// 查询数量
@@ -151,6 +151,12 @@ namespace CRM.IRepository.IBase
         /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
         Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null, bool isNoLock = true);
+
+        #endregion
+
+        #region 多表查询操作
+
+
 
         #endregion
     }
