@@ -8,8 +8,8 @@ namespace CRM.Model.Models
     /// <summary>
     /// 用户表
     /// </summary>
-    [SugarTable("T_Users")]
-    public class UsersModel
+    [SugarTable("T_User")]
+    public class UserModel
     {
         /// <summary>
         /// 主键Id

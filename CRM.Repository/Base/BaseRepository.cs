@@ -214,16 +214,10 @@ namespace CRM.Repository.Base
         /// 查询数量
         /// </summary>
         /// <param name="where">查询条件</param>
-        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        public async Task<long> QueryCountAsync(Expression<Func<T, bool>> where, bool isNoLock = true)
+        public async Task<long> QueryCountAsync(Expression<Func<T, bool>> where)
         {
             var query = await Task.Run(() => db.Queryable<T>());
-
-            if (isNoLock)
-            {
-                query = await Task.Run(() => query.With(SqlWith.NoLock));
-            }
 
             return await query.Where(where).CountAsync();
         }
@@ -232,16 +226,10 @@ namespace CRM.Repository.Base
         /// 查询单条
         /// </summary>
         /// <param name="where">查询条件</param>
-        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, bool isNoLock = true)
+        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where)
         {
             var query = await Task.Run(() => db.Queryable<T>());
-
-            if (isNoLock)
-            {
-                query = await Task.Run(() => query.With(SqlWith.NoLock));
-            }
 
             return await query.Where(where).FirstAsync();
         }
@@ -251,16 +239,10 @@ namespace CRM.Repository.Base
         /// </summary>
         /// <param name="where">查询条件</param>
         /// <param name="orders">排序条件</param>
-        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true)
+        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
         {
             var query = await Task.Run(() => db.Queryable<T>());
-
-            if (isNoLock)
-            {
-                query = await Task.Run(() => query.With(SqlWith.NoLock));
-            }
 
             query = await Task.Run(() => query.Where(where));
 
@@ -275,16 +257,11 @@ namespace CRM.Repository.Base
         /// <summary>
         /// 查询全部
         /// </summary>
-        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
+        /// <param name="isNoLock"></param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync(bool isNoLock = true)
+        public async Task<List<T>> QueryAllAsync()
         {
             var query = await Task.Run(() => db.Queryable<T>());
-
-            if (isNoLock)
-            {
-                query = await Task.Run(() => query.With(SqlWith.NoLock));
-            }
 
             return await query.ToListAsync();
         }
@@ -293,16 +270,10 @@ namespace CRM.Repository.Base
         /// 查询全部
         /// </summary>
         /// <param name="where">查询条件</param>
-        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, bool isNoLock = true)
+        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where)
         {
             var query = await Task.Run(() => db.Queryable<T>());
-
-            if (isNoLock)
-            {
-                query = await Task.Run(() => query.With(SqlWith.NoLock));
-            }
 
             return await query.Where(where).ToListAsync();
         }
@@ -312,16 +283,10 @@ namespace CRM.Repository.Base
         /// </summary>
         /// <param name="where">查询条件</param>
         /// <param name="orders">排序条件</param>
-        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isNoLock = true)
+        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
         {
             var query = await Task.Run(() => db.Queryable<T>());
-
-            if (isNoLock)
-            {
-                query = await Task.Run(() => query.With(SqlWith.NoLock));
-            }
 
             query = await Task.Run(() => query.Where(where));
 
@@ -339,16 +304,10 @@ namespace CRM.Repository.Base
         /// <param name="where">查询条件</param>
         /// <param name="pageInfo">分页信息</param>
         /// <param name="orders">排序条件</param>
-        /// <param name="isNoLock">是否无锁模式，默认无锁</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null, bool isNoLock = true)
+        public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null)
         {
             var query = await Task.Run(() => db.Queryable<T>());
-
-            if (isNoLock)
-            {
-                query = await Task.Run(() => query.With(SqlWith.NoLock));
-            }
 
             if (where != null)
             {
@@ -361,6 +320,56 @@ namespace CRM.Repository.Base
             }
 
             return await query.ToPageListAsync(pageInfo.PageIndex, pageInfo.PageSize, pageInfo.TotalCount);
+        }
+
+        #endregion
+
+        #region 多表查询操作
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression">关联表达式 (t1,t2) => new JoinQueryInfos(JoinType.Inner, t1.UserNo==t2.UserNo)</param>
+        /// <param name="selectExpression">自定义表达式条件，返回匿名对象 (t1, t2) => new { Id =t1.UserNo, Id1 = t2.UserNo}</param>
+        /// <param name="whereExpression">条件表达式 (t1, t2) =>t1.UserNo == "")</param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, TResult>> selectExpression, Expression<Func<T1, T2, bool>> whereExpression = null) where T1 : class, new()
+        {
+            var query = await Task.Run(() => db.Queryable(joinExpression));
+
+            if (whereExpression != null)
+            {
+                query = await Task.Run(() => query.Where(whereExpression));
+            }
+
+            return await query.Select(selectExpression).ToListAsync();
+        }
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的实体对象，返回实体对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="TResult">返回实体对象</typeparam>
+        /// <param name="joinExpression">关联表达式 (t1,t2) => new JoinQueryInfos(JoinType.Inner, t1.UserNo==t2.UserNo)</param>
+        /// <param name="selectExpression">自定义指定实体对象（支持自动填充），返回实体对象集合数据</param>
+        /// <param name="whereExpression">条件表达式 (t1, t2) =>t1.UserNo == "")</param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryMuchEntityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, TResult selectExpression, Expression<Func<T1, T2, bool>> whereExpression = null) where T1 : class, new()
+        {
+            var query = await Task.Run(() => db.Queryable(joinExpression));
+
+            if (whereExpression != null)
+            {
+                query = await Task.Run(() => query.Where(whereExpression));
+            }
+
+            return await query.Select<TResult>().ToListAsync();
         }
 
         #endregion

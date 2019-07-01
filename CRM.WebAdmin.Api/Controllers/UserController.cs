@@ -10,14 +10,14 @@ namespace CRM.WebAdmin.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private IUsersService usersService;
+        private IUserService userService;
 
         //构造函数注入
-        public UsersController(IUsersService usersService)
+        public UserController(IUserService userService)
         {
-            this.usersService = usersService;
+            this.userService = userService;
         }
 
         /// <summary>
@@ -26,9 +26,9 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <param name="addInput"></param>
         /// <returns></returns>
         [HttpPost("AddUsers")]
-        public async Task<(bool result, string message)> AddUsers([FromBody]UsersAddInput addInput)
+        public async Task<(bool result, string message)> AddUsers([FromBody]UserAddInput addInput)
         {
-            var result = await usersService.AddUsersAsync(addInput);
+            var result = await userService.AddUsersAsync(addInput);
 
             return result;
         }
@@ -39,9 +39,9 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <param name="addInputs"></param>
         /// <returns></returns>
         [HttpPost("AddListUsers")]
-        public async Task<(bool result, string message)> AddListUsers([FromBody]List<UsersAddInput> addInputs)
+        public async Task<(bool result, string message)> AddListUsers([FromBody]List<UserAddInput> addInputs)
         {
-            var result = await usersService.AddListUsersAsync(addInputs);
+            var result = await userService.AddListUsersAsync(addInputs);
 
             return result;
         }

@@ -11,19 +11,19 @@ using System.Threading.Tasks;
 
 namespace CRM.Service.Services
 {
-    public class UsersService : BaseService<UsersModel>, IUsersService
+    public class UserService : BaseService<UserModel>, IUserService
     {
-        private IUsersRepository usersRepository;
+        private IUserRepository usersRepository;
 
-        public UsersService(IUsersRepository usersRepository)
+        public UserService(IUserRepository usersRepository)
         {
             this.baseDal = usersRepository;
             this.usersRepository = usersRepository;
         }
 
-        public async Task<(bool result, string message)> AddUsersAsync(UsersAddInput addInput)
+        public async Task<(bool result, string message)> AddUsersAsync(UserAddInput addInput)
         {
-            var usersModel = new UsersModel()
+            var usersModel = new UserModel()
             {
                 Id = Guid.NewGuid(),
                 Name = addInput.Name
@@ -34,13 +34,13 @@ namespace CRM.Service.Services
             return result ? (true, "新增成功！") : (false, "新增失败！");
         }
 
-        public async Task<(bool result, string message)> AddListUsersAsync(List<UsersAddInput> addInputs)
+        public async Task<(bool result, string message)> AddListUsersAsync(List<UserAddInput> addInputs)
         {
-            var usersModelList = new List<UsersModel>();
+            var usersModelList = new List<UserModel>();
 
             foreach (var item in addInputs)
             {
-                var usersModel = new UsersModel()
+                var usersModel = new UserModel()
                 {
                     Id = Guid.NewGuid(),
                     Name = item.Name

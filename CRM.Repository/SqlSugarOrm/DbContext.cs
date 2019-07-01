@@ -31,7 +31,8 @@ namespace CRM.Repository.SqlSugarOrm
                     IsShardSameThread = true,     //设为true相同线程是同一个SqlConnection
                     MoreSettings = new ConnMoreSettings
                     {
-                        IsAutoRemoveDataCache = true        //为true表示可以自动删除二级缓存
+                        IsAutoRemoveDataCache = true,        //为true表示可以自动删除二级缓存
+                        IsWithNoLockQuery = true        //true表式无锁模式，查询的时候默认会加上.With(SqlWith.NoLock)，可以用With(SqlWith.Null)让全局的失效
                     }
                 });
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CRM.Model.InputModels
 {
-    public class UsersAddInput
+    public class UserAddInput
     {
         /// <summary>
         /// 姓名

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CRM.IRepository.IRepositorys
 {
-    public interface IUsersRepository : IBaseRepository<UsersModel>
+    public interface IUserRepository : IBaseRepository<UserModel>
     {
 
     }
