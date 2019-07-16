@@ -1,6 +1,7 @@
 ﻿using CRM.IService.IBase;
-using CRM.Model.InputModels;
+using CRM.Model.RequestModels;
 using CRM.Model.Models;
+using CRM.Model.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,8 +11,12 @@ namespace CRM.IService.IServices
 {
     public interface IUserService : IBaseService<UserModel>
     {
-        Task<(bool result, string message)> AddUsersAsync(UserAddInput addInput);
+        Task<(bool result, string message)> AddUsersAsync(UserAddRequest addRequest);
 
-        Task<(bool result, string message)> AddListUsersAsync(List<UserAddInput> addInputs);
+        Task<(bool result, string message)> AddListUsersAsync(List<UserAddRequest> addRequests);
+
+        Task<List<dynamic>> GetUserRoleModelsAsync();
+
+        Task<List<UserModel>> GetListPage();
     }
 }

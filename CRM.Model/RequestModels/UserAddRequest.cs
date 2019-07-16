@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CRM.Model.InputModels
+namespace CRM.Model.RequestModels
 {
-    public class UserAddInput
+    public class UserAddRequest : BaseRequestModel
     {
         /// <summary>
         /// 姓名

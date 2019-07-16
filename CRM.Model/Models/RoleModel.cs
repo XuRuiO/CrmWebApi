@@ -1,15 +1,15 @@
-﻿using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SqlSugar;
 
 namespace CRM.Model.Models
 {
     /// <summary>
-    /// 用户信息表
+    /// 角色信息表
     /// </summary>
-    [SugarTable("T_User")]
-    public class UserModel
+    [SugarTable("T_Role")]
+    public class RoleModel
     {
         /// <summary>
         /// 主键Id
@@ -17,7 +17,7 @@ namespace CRM.Model.Models
         public Guid Id { get; set; }
 
         /// <summary>
-        /// 用户名称
+        /// 角色名称
         /// </summary>
         public string Name { get; set; }
     }

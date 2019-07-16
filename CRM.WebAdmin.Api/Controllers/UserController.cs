@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CRM.IService.IServices;
-using CRM.Model.InputModels;
+using CRM.Model.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRM.WebAdmin.Api.Controllers
@@ -26,9 +26,9 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <param name="addInput"></param>
         /// <returns></returns>
         [HttpPost("AddUsers")]
-        public async Task<(bool result, string message)> AddUsers([FromBody]UserAddInput addInput)
+        public async Task<(bool result, string message)> AddUsers([FromBody]UserAddRequest addRequest)
         {
-            var result = await userService.AddUsersAsync(addInput);
+            var result = await userService.AddUsersAsync(addRequest);
 
             return result;
         }
@@ -39,22 +39,31 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <param name="addInputs"></param>
         /// <returns></returns>
         [HttpPost("AddListUsers")]
-        public async Task<(bool result, string message)> AddListUsers([FromBody]List<UserAddInput> addInputs)
+        public async Task<(bool result, string message)> AddListUsers([FromBody]List<UserAddRequest> addRequests)
         {
-            var result = await userService.AddListUsersAsync(addInputs);
+            var result = await userService.AddListUsersAsync(addRequests);
 
             return result;
         }
 
         /// <summary>
-        /// 获取名称
+        /// 
         /// </summary>
-        /// <param name="aaa"></param>
         /// <returns></returns>
         [HttpGet("GetName")]
-        public async Task<string> GetName(string aaa)
+        public async Task<List<dynamic>> GetName()
         {
-            return await Task.Run(() => RedisHelper.Get("User:67e5f521-7c0a-480f-9eb2-aa26d6632439"));
+            var result = await userService.GetUserRoleModelsAsync();
+
+            return result;
+        }
+
+        [HttpPost]
+        public async Task<List<Model.Models.UserModel>> GetListPage()
+        {
+            var result = await userService.GetListPage();
+
+            return result;
         }
     }
 }

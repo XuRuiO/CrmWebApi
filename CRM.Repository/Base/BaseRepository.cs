@@ -120,11 +120,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<bool> UpdateAsync(T model, Expression<Func<T, object>> allowColumns)
         {
-            var sugarUpdate = await Task.Run(() => db.Updateable(model));
-            if (allowColumns != null)
-            {
-                sugarUpdate = await Task.Run(() => sugarUpdate.UpdateColumns(allowColumns));
-            }
+            var sugarUpdate = await Task.Run(() => db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns));
 
             return await sugarUpdate.ExecuteCommandAsync() > 0;
         }
@@ -137,11 +133,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<bool> UpdateListAsync(List<T> model, Expression<Func<T, object>> allowColumns)
         {
-            var sugarUpdate = await Task.Run(() => db.Updateable(model));
-            if (allowColumns != null)
-            {
-                sugarUpdate = await Task.Run(() => sugarUpdate.UpdateColumns(allowColumns));
-            }
+            var sugarUpdate = await Task.Run(() => db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns));
 
             return await sugarUpdate.ExecuteCommandAsync() > 0;
         }
@@ -155,11 +147,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<bool> UpdateByWhereAsync(T model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns)
         {
-            var sugarUpdate = await Task.Run(() => db.Updateable(model));
-            if (allowColumns != null)
-            {
-                sugarUpdate = await Task.Run(() => sugarUpdate.UpdateColumns(allowColumns));
-            }
+            var sugarUpdate = await Task.Run(() => db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns));
 
             return await sugarUpdate.Where(where).ExecuteCommandAsync() > 0;
         }
@@ -173,11 +161,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<bool> UpdateListByWhereAsync(List<T> model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns)
         {
-            var sugarUpdate = await Task.Run(() => db.Updateable(model));
-            if (allowColumns != null)
-            {
-                sugarUpdate = await Task.Run(() => sugarUpdate.UpdateColumns(allowColumns));
-            }
+            var sugarUpdate = await Task.Run(() => db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns));
 
             return await sugarUpdate.Where(where).ExecuteCommandAsync() > 0;
         }
@@ -242,13 +226,11 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
         {
-            var query = await Task.Run(() => db.Queryable<T>());
-
-            query = await Task.Run(() => query.Where(where));
+            var query = await Task.Run(() => db.Queryable<T>().Where(where));
 
             if (orders != null)
             {
-                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.isDesc ? OrderByType.Desc : OrderByType.Asc)));
+                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc)));
             }
 
             return await query.FirstAsync();
@@ -286,13 +268,11 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
         {
-            var query = await Task.Run(() => db.Queryable<T>());
-
-            query = await Task.Run(() => query.Where(where));
+            var query = await Task.Run(() => db.Queryable<T>().Where(where));
 
             if (orders != null)
             {
-                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.isDesc ? OrderByType.Desc : OrderByType.Asc)));
+                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc)));
             }
 
             return await query.ToListAsync();
@@ -307,19 +287,20 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null)
         {
-            var query = await Task.Run(() => db.Queryable<T>());
-
-            if (where != null)
-            {
-                query = await Task.Run(() => query.Where(where));
-            }
+            var query = await Task.Run(() => db.Queryable<T>().WhereIF(where != null, where));
 
             if (orders != null)
             {
-                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.isDesc ? OrderByType.Desc : OrderByType.Asc)));
+                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc)));
             }
 
-            return await query.ToPageListAsync(pageInfo.PageIndex, pageInfo.PageSize, pageInfo.TotalCount);
+            RefAsync<int> totalCount = 0;
+
+            var result = await query.ToPageListAsync(pageInfo.PageIndex, pageInfo.PageSize, totalCount);
+
+            pageInfo.TotalCount = totalCount;
+
+            return result;
         }
 
         #endregion
@@ -336,18 +317,192 @@ namespace CRM.Repository.Base
         /// <param name="joinExpression">关联表达式 (t1,t2) => new JoinQueryInfos(JoinType.Inner, t1.UserNo==t2.UserNo)</param>
         /// <param name="selectExpression">自定义表达式条件，返回匿名对象 (t1, t2) => new { Id =t1.UserNo, Id1 = t2.UserNo}</param>
         /// <param name="whereExpression">条件表达式 (t1, t2) =>t1.UserNo == "")</param>
+        /// <param name="orderMuch">排序条件</param>
         /// <returns></returns>
-        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, TResult>> selectExpression, Expression<Func<T1, T2, bool>> whereExpression = null) where T1 : class, new()
+        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, TResult>> selectExpression, Expression<Func<T1, T2, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression));
-
-            if (whereExpression != null)
-            {
-                query = await Task.Run(() => query.Where(whereExpression));
-            }
+            var query = await Task.Run(() => db.Queryable(joinExpression)
+                                            .WhereIF(whereExpression != null, whereExpression)
+                                            .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
 
             return await query.Select(selectExpression).ToListAsync();
         }
+
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="T3">实体3</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <param name="orderMuch"></param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, TResult>(Expression<Func<T1, T2, T3, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, TResult>> selectExpression, Expression<Func<T1, T2, T3, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
+        {
+            var query = await Task.Run(() => db.Queryable(joinExpression)
+                                            .WhereIF(whereExpression != null, whereExpression)
+                                            .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
+
+            return await query.Select(selectExpression).ToListAsync();
+        }
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="T3">实体3</typeparam>
+        /// <typeparam name="T4">实体4</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <param name="orderMuch"></param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, TResult>(Expression<Func<T1, T2, T3, T4, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
+        {
+            var query = await Task.Run(() => db.Queryable(joinExpression)
+                                            .WhereIF(whereExpression != null, whereExpression)
+                                            .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
+
+            return await query.Select(selectExpression).ToListAsync();
+        }
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="T3">实体3</typeparam>
+        /// <typeparam name="T4">实体4</typeparam>
+        /// <typeparam name="T5">实体5</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <param name="orderMuch"></param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, TResult>(Expression<Func<T1, T2, T3, T4, T5, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
+        {
+            var query = await Task.Run(() => db.Queryable(joinExpression)
+                                .WhereIF(whereExpression != null, whereExpression)
+                                .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
+
+            return await query.Select(selectExpression).ToListAsync();
+        }
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="T3">实体3</typeparam>
+        /// <typeparam name="T4">实体4</typeparam>
+        /// <typeparam name="T5">实体5</typeparam>
+        /// <typeparam name="T6">实体6</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <param name="orderMuch"></param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, T6, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, T6, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
+        {
+            var query = await Task.Run(() => db.Queryable(joinExpression)
+                    .WhereIF(whereExpression != null, whereExpression)
+                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
+
+            return await query.Select(selectExpression).ToListAsync();
+        }
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="T3">实体3</typeparam>
+        /// <typeparam name="T4">实体4</typeparam>
+        /// <typeparam name="T5">实体5</typeparam>
+        /// <typeparam name="T6">实体6</typeparam>
+        /// <typeparam name="T7">实体7</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <param name="orderMuch"></param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, T6, T7, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
+        {
+            var query = await Task.Run(() => db.Queryable(joinExpression)
+                    .WhereIF(whereExpression != null, whereExpression)
+                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
+
+            return await query.Select(selectExpression).ToListAsync();
+        }
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="T3">实体3</typeparam>
+        /// <typeparam name="T4">实体4</typeparam>
+        /// <typeparam name="T5">实体5</typeparam>
+        /// <typeparam name="T6">实体6</typeparam>
+        /// <typeparam name="T7">实体7</typeparam>
+        /// <typeparam name="T8">实体8</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <param name="orderMuch"></param>
+        /// <returns></returns>
+        public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
+        {
+            var query = await Task.Run(() => db.Queryable(joinExpression)
+                    .WhereIF(whereExpression != null, whereExpression)
+                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
+
+            return await query.Select(selectExpression).ToListAsync();
+        }
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="T3">实体3</typeparam>
+        /// <typeparam name="T4">实体4</typeparam>
+        /// <typeparam name="T5">实体5</typeparam>
+        /// <typeparam name="T6">实体6</typeparam>
+        /// <typeparam name="T7">实体7</typeparam>
+        /// <typeparam name="T8">实体8</typeparam>
+        /// <typeparam name="T9">实体9</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <param name="orderMuch"></param>
+        /// <returns></returns>
+        //public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
+        //{
+        //    var query = await Task.Run(() => db.Queryable(joinExpression)
+        //            .WhereIF(whereExpression != null, whereExpression)
+        //            .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
+
+        //    return await query.Select(selectExpression).ToListAsync();
+        //}
 
         /// <summary>
         /// 多表查询
@@ -370,6 +525,36 @@ namespace CRM.Repository.Base
             }
 
             return await query.Select<TResult>().ToListAsync();
+        }
+
+        #endregion
+
+        #region 私有方法
+
+        /// <summary>
+        /// 排序转换
+        /// </summary>
+        /// <param name="orderBys">排序</param>
+        /// <returns>值</returns>
+        private string ParseOrderBy(List<OrderByClause> orderBys)
+        {
+            var conds = "";
+            foreach (var con in orderBys)
+            {
+                switch (con.Order)
+                {
+                    case SqlSugarEnums.OrderSequence.Asc:
+                        conds += $"{con.Sort} asc,";
+                        break;
+                    case SqlSugarEnums.OrderSequence.Desc:
+                        conds += $"{con.Sort} desc,";
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return conds.TrimEnd(',');
         }
 
         #endregion

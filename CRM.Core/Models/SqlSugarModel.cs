@@ -37,24 +37,20 @@ namespace CRM.Core.Models
             IdentityIntoEntity = 5
         }
 
-
-    }
-
-    /// <summary>
-    /// SqlSugarJoin实体类（排序）
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class SqlSugarOrder<T>
-    {
         /// <summary>
-        /// 排序表达式
+        /// 排序枚举
         /// </summary>
-        public Expression<Func<T, object>> OrderExpn { get; set; }
-
-        /// <summary>
-        /// 是否降序
-        /// </summary>
-        public bool isDesc { get; set; } = true;
+        public enum OrderSequence
+        {
+            /// <summary>
+            /// 正序
+            /// </summary>
+            Asc,
+            /// <summary>
+            /// 倒序
+            /// </summary>
+            Desc
+        }
     }
 
     /// <summary>
@@ -77,4 +73,41 @@ namespace CRM.Core.Models
         /// </summary>
         public int TotalCount { get; set; }
     }
+
+    /// <summary>
+    /// 单表排序
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class SqlSugarOrder<T>
+    {
+        /// <summary>
+        /// 排序表达式
+        /// </summary>
+        public Expression<Func<T, object>> OrderExpn { get; set; }
+
+        /// <summary>
+        /// 是否降序
+        /// </summary>
+        public bool IsDesc { get; set; } = true;
+    }
+
+    #region 多表排序
+
+    /// <summary>
+    /// 排序实体
+    /// </summary>
+    public class OrderByClause
+    {
+        /// <summary>
+        /// 排序字段
+        /// </summary>
+        public string Sort { get; set; }
+
+        /// <summary>
+        /// 排序类型
+        /// </summary>
+        public SqlSugarEnums.OrderSequence Order { get; set; }
+    }
+
+    #endregion
 }

@@ -159,8 +159,24 @@ namespace CRM.IService.IBase
         /// <param name="joinExpression">关联表达式 (t1,t2) => new JoinQueryInfos(JoinType.Inner, t1.UserNo==t2.UserNo)</param>
         /// <param name="selectExpression">自定义表达式条件，返回匿名对象 (t1, t2) => new { Id =t1.UserNo, Id1 = t2.UserNo}</param>
         /// <param name="whereExpression">条件表达式 (t1, t2) =>t1.UserNo == "")</param>
+        /// <param name="orderMuch">排序条件</param>
         /// <returns></returns>
-        Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, TResult>> selectExpression, Expression<Func<T1, T2, bool>> whereExpression = null) where T1 : class, new();
+        Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, TResult>> selectExpression, Expression<Func<T1, T2, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new();
+
+        /// <summary>
+        /// 多表查询
+        /// 根据自定义的表达式，返回匿名对象集合数据
+        /// </summary>
+        /// <typeparam name="T1">实体1</typeparam>
+        /// <typeparam name="T2">实体2</typeparam>
+        /// <typeparam name="T3">实体3</typeparam>
+        /// <typeparam name="TResult">返回匿名对象</typeparam>
+        /// <param name="joinExpression"></param>
+        /// <param name="selectExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <param name="orderMuch"></param>
+        /// <returns></returns>
+        Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, TResult>(Expression<Func<T1, T2, T3, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, TResult>> selectExpression, Expression<Func<T1, T2, T3, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new();
 
         /// <summary>
         /// 多表查询
