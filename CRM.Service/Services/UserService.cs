@@ -74,7 +74,7 @@ namespace CRM.Service.Services
         {
             var pageInfo = new SqlSugarPageInfo() { PageIndex = 1, PageSize = 5 };
 
-            return await baseDal.QueryConditionPageAsync(null, pageInfo);
+            return await baseDal.QueryConditionPageAsync(x => x.Name.Contains("徐"), pageInfo);
         }
     }
 }
