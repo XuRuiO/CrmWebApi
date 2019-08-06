@@ -120,9 +120,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<bool> UpdateAsync(T model, Expression<Func<T, object>> allowColumns)
         {
-            var sugarUpdate = await Task.Run(() => db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns));
-
-            return await sugarUpdate.ExecuteCommandAsync() > 0;
+            return await db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns).ExecuteCommandAsync() > 0;
         }
 
         /// <summary>
@@ -133,9 +131,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<bool> UpdateListAsync(List<T> model, Expression<Func<T, object>> allowColumns)
         {
-            var sugarUpdate = await Task.Run(() => db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns));
-
-            return await sugarUpdate.ExecuteCommandAsync() > 0;
+            return await db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns).ExecuteCommandAsync() > 0;
         }
 
         /// <summary>
@@ -147,9 +143,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<bool> UpdateByWhereAsync(T model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns)
         {
-            var sugarUpdate = await Task.Run(() => db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns));
-
-            return await sugarUpdate.Where(where).ExecuteCommandAsync() > 0;
+            return await db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns).Where(where).ExecuteCommandAsync() > 0;
         }
 
         /// <summary>
@@ -161,9 +155,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<bool> UpdateListByWhereAsync(List<T> model, Expression<Func<T, bool>> where, Expression<Func<T, object>> allowColumns)
         {
-            var sugarUpdate = await Task.Run(() => db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns));
-
-            return await sugarUpdate.Where(where).ExecuteCommandAsync() > 0;
+            return await db.Updateable(model).UpdateColumnsIF(allowColumns != null, allowColumns).Where(where).ExecuteCommandAsync() > 0;
         }
 
         #endregion
@@ -201,9 +193,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<long> QueryCountAsync(Expression<Func<T, bool>> where)
         {
-            var query = await Task.Run(() => db.Queryable<T>());
-
-            return await query.Where(where).CountAsync();
+            return await db.Queryable<T>().Where(where).CountAsync();
         }
 
         /// <summary>
@@ -213,9 +203,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where)
         {
-            var query = await Task.Run(() => db.Queryable<T>());
-
-            return await query.Where(where).FirstAsync();
+            return await db.Queryable<T>().Where(where).FirstAsync();
         }
 
         /// <summary>
@@ -226,11 +214,11 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
         {
-            var query = await Task.Run(() => db.Queryable<T>().Where(where));
+            var query = db.Queryable<T>().Where(where);
 
             if (orders != null)
             {
-                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc)));
+                query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc));
             }
 
             return await query.FirstAsync();
@@ -243,9 +231,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<T>> QueryAllAsync()
         {
-            var query = await Task.Run(() => db.Queryable<T>());
-
-            return await query.ToListAsync();
+            return await db.Queryable<T>().ToListAsync();
         }
 
         /// <summary>
@@ -255,9 +241,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where)
         {
-            var query = await Task.Run(() => db.Queryable<T>());
-
-            return await query.Where(where).ToListAsync();
+            return await db.Queryable<T>().Where(where).ToListAsync();
         }
 
         /// <summary>
@@ -268,11 +252,11 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
         {
-            var query = await Task.Run(() => db.Queryable<T>().Where(where));
+            var query = db.Queryable<T>().Where(where);
 
             if (orders != null)
             {
-                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc)));
+                query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc));
             }
 
             return await query.ToListAsync();
@@ -287,11 +271,11 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null)
         {
-            var query = await Task.Run(() => db.Queryable<T>().WhereIF(where != null, where));
+            var query = db.Queryable<T>().WhereIF(where != null, where);
 
             if (orders != null)
             {
-                query = await Task.Run(() => query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc)));
+                query = orders.Aggregate(query, (current, item) => current.OrderBy(item.OrderExpn, item.IsDesc ? OrderByType.Desc : OrderByType.Asc));
             }
 
             RefAsync<int> totalCount = 0;
@@ -321,13 +305,8 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, TResult>> selectExpression, Expression<Func<T1, T2, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                                            .WhereIF(whereExpression != null, whereExpression)
-                                            .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select(selectExpression).ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select(selectExpression).ToListAsync();
         }
-
 
         /// <summary>
         /// 多表查询
@@ -344,11 +323,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, TResult>(Expression<Func<T1, T2, T3, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, TResult>> selectExpression, Expression<Func<T1, T2, T3, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                                            .WhereIF(whereExpression != null, whereExpression)
-                                            .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select(selectExpression).ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select(selectExpression).ToListAsync();
         }
 
         /// <summary>
@@ -367,11 +342,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, TResult>(Expression<Func<T1, T2, T3, T4, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                                            .WhereIF(whereExpression != null, whereExpression)
-                                            .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select(selectExpression).ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select(selectExpression).ToListAsync();
         }
 
         /// <summary>
@@ -391,11 +362,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, TResult>(Expression<Func<T1, T2, T3, T4, T5, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                                .WhereIF(whereExpression != null, whereExpression)
-                                .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select(selectExpression).ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select(selectExpression).ToListAsync();
         }
 
         /// <summary>
@@ -416,11 +383,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, T6, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, T6, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select(selectExpression).ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select(selectExpression).ToListAsync();
         }
 
         /// <summary>
@@ -442,11 +405,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, T6, T7, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select(selectExpression).ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select(selectExpression).ToListAsync();
         }
 
         /// <summary>
@@ -469,11 +428,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchAnonymityAsync<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, JoinQueryInfos>> joinExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult>> selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select(selectExpression).ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select(selectExpression).ToListAsync();
         }
 
         /// <summary>
@@ -490,11 +445,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchEntityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, TResult selectExpression, Expression<Func<T1, T2, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select<TResult>().ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>().ToListAsync();
         }
 
         /// <summary>
@@ -512,11 +463,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchEntityAsync<T1, T2, T3, TResult>(Expression<Func<T1, T2, T3, JoinQueryInfos>> joinExpression, TResult selectExpression, Expression<Func<T1, T2, T3, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select<TResult>().ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>().ToListAsync();
         }
 
         /// <summary>
@@ -535,11 +482,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchEntityAsync<T1, T2, T3, T4, TResult>(Expression<Func<T1, T2, T3, T4, JoinQueryInfos>> joinExpression, TResult selectExpression, Expression<Func<T1, T2, T3, T4, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select<TResult>().ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>().ToListAsync();
         }
 
         /// <summary>
@@ -559,11 +502,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchEntityAsync<T1, T2, T3, T4, T5, TResult>(Expression<Func<T1, T2, T3, T4, T5, JoinQueryInfos>> joinExpression, TResult selectExpression, Expression<Func<T1, T2, T3, T4, T5, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select<TResult>().ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>().ToListAsync();
         }
 
         /// <summary>
@@ -584,11 +523,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchEntityAsync<T1, T2, T3, T4, T5, T6, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, JoinQueryInfos>> joinExpression, TResult selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select<TResult>().ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>().ToListAsync();
         }
 
         /// <summary>
@@ -610,11 +545,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchEntityAsync<T1, T2, T3, T4, T5, T6, T7, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, JoinQueryInfos>> joinExpression, TResult selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select<TResult>().ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>().ToListAsync();
         }
 
         /// <summary>
@@ -637,11 +568,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryMuchEntityAsync<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, JoinQueryInfos>> joinExpression, TResult selectExpression, Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)));
-
-            return await query.Select<TResult>().ToListAsync();
+            return await db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>().ToListAsync();
         }
 
         #endregion
@@ -663,10 +590,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryPageMuchEntityAsync<T1, T2, TResult>(Expression<Func<T1, T2, JoinQueryInfos>> joinExpression, TResult selectExpression, SqlSugarPageInfo pageInfo, Expression<Func<T1, T2, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch))
-                    .Select<TResult>());
+            var query = db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>();
 
             RefAsync<int> totalCount = 0;
 
@@ -693,10 +617,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryPageMuchEntityAsync<T1, T2, T3, TResult>(Expression<Func<T1, T2, T3, JoinQueryInfos>> joinExpression, TResult selectExpression, SqlSugarPageInfo pageInfo, Expression<Func<T1, T2, T3, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch))
-                    .Select<TResult>());
+            var query = db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>();
 
             RefAsync<int> totalCount = 0;
 
@@ -724,10 +645,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryPageMuchEntityAsync<T1, T2, T3, T4, TResult>(Expression<Func<T1, T2, T3, T4, JoinQueryInfos>> joinExpression, TResult selectExpression, SqlSugarPageInfo pageInfo, Expression<Func<T1, T2, T3, T4, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch))
-                    .Select<TResult>());
+            var query = db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>();
 
             RefAsync<int> totalCount = 0;
 
@@ -756,10 +674,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryPageMuchEntityAsync<T1, T2, T3, T4, T5, TResult>(Expression<Func<T1, T2, T3, T4, T5, JoinQueryInfos>> joinExpression, TResult selectExpression, SqlSugarPageInfo pageInfo, Expression<Func<T1, T2, T3, T4, T5, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch))
-                    .Select<TResult>());
+            var query = db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>();
 
             RefAsync<int> totalCount = 0;
 
@@ -789,10 +704,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryPageMuchEntityAsync<T1, T2, T3, T4, T5, T6, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, JoinQueryInfos>> joinExpression, TResult selectExpression, SqlSugarPageInfo pageInfo, Expression<Func<T1, T2, T3, T4, T5, T6, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch))
-                    .Select<TResult>());
+            var query = db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>();
 
             RefAsync<int> totalCount = 0;
 
@@ -823,10 +735,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryPageMuchEntityAsync<T1, T2, T3, T4, T5, T6, T7, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, JoinQueryInfos>> joinExpression, TResult selectExpression, SqlSugarPageInfo pageInfo, Expression<Func<T1, T2, T3, T4, T5, T6, T7, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch))
-                    .Select<TResult>());
+            var query = db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>();
 
             RefAsync<int> totalCount = 0;
 
@@ -858,10 +767,7 @@ namespace CRM.Repository.Base
         /// <returns></returns>
         public async Task<List<TResult>> QueryPageMuchEntityAsync<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, JoinQueryInfos>> joinExpression, TResult selectExpression, SqlSugarPageInfo pageInfo, Expression<Func<T1, T2, T3, T4, T5, T6, T7, T8, bool>> whereExpression = null, List<OrderByClause> orderMuch = null) where T1 : class, new()
         {
-            var query = await Task.Run(() => db.Queryable(joinExpression)
-                    .WhereIF(whereExpression != null, whereExpression)
-                    .OrderByIF(orderMuch != null, ParseOrderBy(orderMuch))
-                    .Select<TResult>());
+            var query = db.Queryable(joinExpression).WhereIF(whereExpression != null, whereExpression).OrderByIF(orderMuch != null, ParseOrderBy(orderMuch)).Select<TResult>();
 
             RefAsync<int> totalCount = 0;
 
