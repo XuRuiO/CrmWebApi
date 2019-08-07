@@ -6,7 +6,7 @@ using System.Text;
 namespace CRM.Core.Models
 {
     /// <summary>
-    /// SqlSugar 枚举类
+    /// 2019.02.23      Rui     SqlSugar 枚举类
     /// </summary>
     public class SqlSugarEnums
     {

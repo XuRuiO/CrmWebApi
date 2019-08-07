@@ -51,13 +51,12 @@ namespace CRM.Freamwork.Swagger
 
             //获取CRM.WebAdmin.Api XML文档注释
             var xmlApiPath = Path.Combine(basePath, "CRM.WebAdmin.Api.xml");
-            //默认的第二个参数是false，这个是controller的注释，记得修改
+            //默认的第二个参数是false，是否开启controller的注释
             options.IncludeXmlComments(xmlApiPath, true);
 
-            //获取CRM.Model.xml XML文档注释
-            //var xmlModelPath = Path.Combine(basePath, "CRM.Model.xml");
-            ////默认的第二个参数是false，这个是controller的注释，记得修改
-            //options.IncludeXmlComments(xmlModelPath);
+            //获取CRM.Model XML文档注释
+            var xmlModelPath = Path.Combine(basePath, "CRM.Model.xml");
+            options.IncludeXmlComments(xmlModelPath);
         }
 
         /// <summary>

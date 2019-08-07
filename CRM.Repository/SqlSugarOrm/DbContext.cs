@@ -8,7 +8,7 @@ using SqlSugar;
 namespace CRM.Repository.SqlSugarOrm
 {
     /// <summary>
-    /// SqlSugarOrm 数据库上下文对象
+    /// 2019.02.23      Rui     SqlSugarOrm 数据库上下文对象
     /// </summary>
     public class DbContext
     {

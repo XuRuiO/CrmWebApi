@@ -34,7 +34,10 @@ namespace CRM.WebAdmin.Api
 
             #region 2019.06.11      Rui     初始化CsRedis Sdk服务
 
-            RedisCacheExtension.Initialization();
+            if (ConfigsHelper.GetRedisCacheEnabled())
+            {
+                RedisCacheExtension.Initialization();
+            }
 
             #endregion
         }
@@ -84,7 +87,7 @@ namespace CRM.WebAdmin.Api
 
             services.AddSwaggerGenCRM();
 
-            #endregion 2018.11.11      Rui     添加Swagger自定义配置
+            #endregion
 
             #region 2018.12.11      Rui     Token服务注册
 
@@ -100,7 +103,7 @@ namespace CRM.WebAdmin.Api
                 options.AddPolicy("AdminOrClient", policy => policy.RequireRole("Admin,Client").Build());
             });
 
-            #endregion 2018.12.11      Rui     Token服务注册
+            #endregion
 
             #region 2019.05.27      Rui     依赖注入Autofac
 
@@ -145,7 +148,7 @@ namespace CRM.WebAdmin.Api
                 //这个时候去launchSettings.json中把"launchUrl": "swagger/index.html"去掉， 然后直接访问localhost:8001/index.html即可
             });
 
-            #endregion 2018.11.11      Rui     使用Swagger
+            #endregion
 
             #region 2018.12.20      Rui     使用JwtTokenAuth中间件
 
@@ -154,7 +157,7 @@ namespace CRM.WebAdmin.Api
 
             #endregion
 
-            //返回错误码
+            //使用状态错误码中间件，把错误码返回前台，比如是404
             app.UseStatusCodePages();
 
             //使用Mvc中间件

@@ -29,6 +29,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.IService", "CRM.IServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRM.Service", "CRM.Service\CRM.Service.csproj", "{4E448829-C2ED-4354-AC91-8B424CD85F18}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06-计划任务", "06-计划任务", "{E698CEDB-F3B4-445A-9833-1C4090C98798}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07-测试", "07-测试", "{1FCEC07E-B61B-4647-94CC-54144BD767C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
