@@ -31,7 +31,7 @@ namespace CRM.Freamwork.Swagger
                     Contact = new Contact { Name = "XuRuiO", Email = "xhxy@live.cn", Url = "https://github.com/XuRuiO" }
                 });
 
-                //添加生成Swagger文档注释功能
+                //添加生成Swagger的文档注释功能
                 options.AddDocumentAnnotation();
 
                 //添加header验证信息
