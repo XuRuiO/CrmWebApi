@@ -17,6 +17,6 @@ namespace CRM.IService.IServices
 
         Task<List<dynamic>> GetUserRoleModelsAsync();
 
-        Task<List<UserModel>> GetListPage();
+        Task<List<UserModel>> GetListPage(string name);
     }
 }

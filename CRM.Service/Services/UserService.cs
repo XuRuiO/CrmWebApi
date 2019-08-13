@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SqlSugar;
 using System.Linq.Expressions;
+using CRM.Core.Attributes;
 
 namespace CRM.Service.Services
 {
@@ -70,11 +71,12 @@ namespace CRM.Service.Services
                 );
         }
 
-        public async Task<List<UserModel>> GetListPage()
+        [MemoryCache]
+        public async Task<List<UserModel>> GetListPage(string name)
         {
             var pageInfo = new SqlSugarPageInfo() { PageIndex = 1, PageSize = 5 };
 
-            return await baseDal.QueryConditionPageAsync(x => x.Name.Contains("徐"), pageInfo);
+            return await baseDal.QueryConditionPageAsync(x => x.Name.Contains(name), pageInfo);
         }
     }
 }

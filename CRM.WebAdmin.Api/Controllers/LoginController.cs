@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CRM.WebAdmin.Api.Controllers
 {
+    /// <summary>
+    /// 登陆管理
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : ControllerBase

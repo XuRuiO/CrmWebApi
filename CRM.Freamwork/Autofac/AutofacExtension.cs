@@ -27,10 +27,10 @@ namespace CRM.Freamwork.Autofac
             ////第一步：构造一个AutoFac的builder容器。
             var builder = new ContainerBuilder();
 
-            #region 注册拦截器Aop（由于Aop还不太理解，暂时项目中没用起来Aop这一块，还是要多看博客园之 《老张的哲学》）
+            #region 注册要通过反射创建的组件，注册拦截器Aop（AOP是切面，是面向的service层的所有方法）
 
-            //日志拦截器
-            //builder.RegisterType<LogAop>();
+            //内存缓存拦截器
+            builder.RegisterType<MemoryCacheAop>();
 
             #endregion
 
@@ -38,7 +38,10 @@ namespace CRM.Freamwork.Autofac
             //获取项目路径
             var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
 
-            //循环注入
+            //定义注入的dll程序集名称集合
+            var assembliesList = new List<Assembly>();
+
+            //循环获取需要注入的dll
             foreach (var assemblysName in ConfigsHelper.GetAutoFacAssemblyName().Split(','))
             {
                 //获取注入项目绝对路径
@@ -49,18 +52,23 @@ namespace CRM.Freamwork.Autofac
                   Assembly.LoadFrom：则不一样，它会载入dll文件及其引用的其他dll，比如上面的例子，b.dll也会被载入。
                  */
                 var assemblysRepositorysAndServices = Assembly.LoadFrom(repositorysAndServicesDllFile);
-
-                //AsImplementedInterfaces:指明创建的stypes这个集合中所有类的对象实例，以其接口的形式保存。
-                builder.RegisterAssemblyTypes(assemblysRepositorysAndServices).AsImplementedInterfaces();
+                //将获取到的dll添加到list中
+                assembliesList.Add(assemblysRepositorysAndServices);
             }
 
-            //第三步：将 services 填充 Autofac 容器生成器
+            //第三步：AsImplementedInterfaces:指明创建的stypes这个集合中所有类的对象实例，以其接口的形式保存。
+            builder.RegisterAssemblyTypes(assembliesList.ToArray()).AsImplementedInterfaces()
+                    .InstancePerLifetimeScope()
+                    .EnableInterfaceInterceptors()
+                    .InterceptedBy(typeof(MemoryCacheAop));     //允许将拦截器服务的列表分配给注册
+
+            //第四步：将 services 填充 Autofac 容器生成器
             builder.Populate(services);
 
-            //第四步：使用已进行的组件登记创建新容器
+            //第五步：使用已进行的组件登记创建新容器
             var applicationContainer = builder.Build();
 
-            //第五步：第三方IOC接管 core内置DI容器
+            //第六步：第三方IOC接管 core内置DI容器
             return new AutofacServiceProvider(applicationContainer);
         }
     }
