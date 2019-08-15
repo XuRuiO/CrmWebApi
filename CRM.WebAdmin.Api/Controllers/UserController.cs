@@ -69,6 +69,8 @@ namespace CRM.WebAdmin.Api.Controllers
         [HttpPost]
         public async Task<List<Model.Models.UserModel>> GetListPage(string name = "徐")
         {
+            logger.LogInformation("徐瑞你好！");
+
             var result = await userService.GetListPage(name);
 
             return result;
