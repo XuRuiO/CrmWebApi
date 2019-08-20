@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CRM.Core.Filters;
 using CRM.Core.Helpers;
 using CRM.Freamwork.Autofac;
 using CRM.Freamwork.Cache.MemoryCache;
@@ -53,6 +54,9 @@ namespace CRM.WebAdmin.Api
             {
                 //路由参数在此处仍然是有效的，比如添加一个版本号，不需要可以注释
                 //options.UseCentralRoutePrefix(new RouteAttribute("v1"));
+
+                //注入全局异常捕获
+                options.Filters.Add(typeof(GlobalExceptionsFilter));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             #region 2019.08.11      Rui     部分服务注入，netcore自带方法

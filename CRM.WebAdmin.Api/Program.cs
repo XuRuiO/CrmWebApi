@@ -24,7 +24,7 @@ namespace CRM.WebAdmin.Api
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();       //移除已经注册的其他日志处理程序
-                    logging.SetMinimumLevel(LogLevel.Trace);
+                    logging.SetMinimumLevel(LogLevel.Trace);        //设置最小日志级别
                 })
                 .UseNLog();
     }

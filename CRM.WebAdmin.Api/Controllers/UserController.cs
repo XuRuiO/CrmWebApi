@@ -7,7 +7,6 @@ using CRM.IService.IServices;
 using CRM.Model.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 
 namespace CRM.WebAdmin.Api.Controllers
 {
@@ -19,13 +18,11 @@ namespace CRM.WebAdmin.Api.Controllers
     public class UserController : ControllerBase
     {
         private IUserService userService;
-        private ILogger<UserController> logger;
 
         //构造函数注入
-        public UserController(IUserService userService, ILogger<UserController> logger)
+        public UserController(IUserService userService)
         {
             this.userService = userService;
-            this.logger = logger;
         }
 
         /// <summary>
@@ -69,7 +66,7 @@ namespace CRM.WebAdmin.Api.Controllers
         [HttpPost]
         public async Task<List<Model.Models.UserModel>> GetListPage(string name = "徐")
         {
-            logger.LogInformation("徐瑞你好！");
+            Convert.ToInt32("你好！");
 
             var result = await userService.GetListPage(name);
 
