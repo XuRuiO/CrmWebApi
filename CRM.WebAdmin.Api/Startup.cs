@@ -24,6 +24,7 @@ namespace CRM.WebAdmin.Api
 {
     public class Startup
     {
+        //构造函数 Startup  Core的核心是依赖注入  所以要有构造函数进行注入 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -44,8 +45,10 @@ namespace CRM.WebAdmin.Api
             #endregion
         }
 
+        //承载注入实现的对象 IConfiguration
         public IConfiguration Configuration { get; }
 
+        //添加服务的方法 ConfigureServices，主要实现了依赖注入(DI)的配置
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -130,6 +133,7 @@ namespace CRM.WebAdmin.Api
             #endregion
         }
 
+        //主要是http处理管道配置和一些系统配置
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -140,7 +144,11 @@ namespace CRM.WebAdmin.Api
             }
             else
             {
-                app.UseHsts();
+                //生产环境，发生错误跳转错误页面
+                app.UseExceptionHandler("/Error");
+
+                //生产环境中，使用HTTPS严格安全传输(or HSTS) 对于保护web安全是非常重要的。强制实施 HTTPS 在 ASP.NET Core，配合 app.UseHttpsRedirection。
+                //app.UseHsts();
             }
 
             #region 2019.06.14      Rui     使用CORS中间件
