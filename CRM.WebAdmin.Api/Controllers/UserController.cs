@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Castle.Core.Logging;
+using CRM.Core.Models;
 using CRM.IService.IServices;
+using CRM.Model.Models;
 using CRM.Model.RequestModels;
+using CRM.Model.ViewPageModels;
+using CRM.WebAdmin.Api.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -15,7 +19,7 @@ namespace CRM.WebAdmin.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private IUserService userService;
 
@@ -64,13 +68,11 @@ namespace CRM.WebAdmin.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<List<Model.Models.UserModel>> GetListPage(string name = "徐")
+        public async Task<Result<BasePageModel<UserModel>>> GetListPage(string name = "徐")
         {
-            Convert.ToInt32("你好！");
-
             var result = await userService.GetListPage(name);
 
-            return result;
+            return Success("请求成功！", result);
         }
     }
 }

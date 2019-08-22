@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CRM.WebAdmin.Api.AuthHelper.OverWrite;
+using CRM.WebAdmin.Api.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ namespace CRM.WebAdmin.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class LoginController : BaseController
     {
         [HttpGet("GetJWTStr")]
         public ActionResult GetJWTStr(long id = 1, string sub = "Admin")

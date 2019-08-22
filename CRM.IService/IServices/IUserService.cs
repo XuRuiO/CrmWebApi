@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using CRM.Model.ViewPageModels;
 
 namespace CRM.IService.IServices
 {
@@ -17,6 +18,6 @@ namespace CRM.IService.IServices
 
         Task<List<dynamic>> GetUserRoleModelsAsync();
 
-        Task<List<UserModel>> GetListPage(string name);
+        Task<BasePageModel<UserModel>> GetListPage(string name);
     }
 }

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using SqlSugar;
 using System.Linq.Expressions;
 using CRM.Core.Attributes;
+using CRM.Model.ViewPageModels;
 
 namespace CRM.Service.Services
 {
@@ -72,11 +73,17 @@ namespace CRM.Service.Services
         }
 
         [MemoryCache]
-        public async Task<List<UserModel>> GetListPage(string name)
+        public async Task<BasePageModel<UserModel>> GetListPage(string name)
         {
             var pageInfo = new SqlSugarPageInfo() { PageIndex = 1, PageSize = 5 };
 
-            return await baseDal.QueryConditionPageAsync(x => x.Name.Contains(name), pageInfo);
+            var result = await baseDal.QueryConditionPageAsync(null, pageInfo);
+
+            return new BasePageModel<UserModel>
+            {
+                Models = result,
+                Total = pageInfo.TotalCount
+            };
         }
     }
 }
