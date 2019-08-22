@@ -5,7 +5,7 @@ using System.Text;
 namespace CRM.Model.ViewPageModels
 {
     /// <summary>
-    /// 基类查询分页模型（请求）
+    /// 基类查询分页模型（请求）,需要分页查询的请继承该类
     /// </summary>
     public class BaseQueryPageModel
     {

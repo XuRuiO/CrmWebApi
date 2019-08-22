@@ -43,6 +43,9 @@ namespace CRM.Core.Models
         public string Message { get; set; }
     }
 
+    /// <summary>
+    /// 返回状态码
+    /// </summary>
     public enum ApiResponseStatusCode
     {
         /// <summary>

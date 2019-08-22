@@ -7,6 +7,7 @@ namespace CRM.Model.ViewPageModels
     /// <summary>
     /// 基类分页模型（响应）
     /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class BasePageModel<T>
     {
         /// <summary>
