@@ -5,5 +5,5 @@
 
 ## 项目描述
 ```
-前端：Vue-Cli 3.0 脚手架搭建的前端框架的前后端分离项目，运用了 Vue+Vuex+Axios+IView UI组件。
-后端：.Net Core WebApi。 
+前端：Vue-Cli 3.0 脚手架搭建的前端框架的前后端分离项目，运用了 Vue+Vuex+Axios+Element UI组件。
+后端：.Net Core 2.2 WebApi。 

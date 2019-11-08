@@ -1,26 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using SqlSugar;
 
 namespace CRM.Model.Models
 {
+    ///<summary>
+    ///用户角色信息表
+    ///</summary>
     [SugarTable("T_UserRole")]
-    public class UserRoleModel
+    public partial class UserRoleModel
     {
         /// <summary>
         /// 主键Id
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id {get;set;}
 
         /// <summary>
         /// 用户主键Id
         /// </summary>
-        public Guid UserId { get; set; }
+        public Guid? UserId {get;set;}
 
         /// <summary>
         /// 角色主键Id
         /// </summary>
-        public Guid RoleId { get; set; }
+        public Guid? RoleId {get;set;}
     }
 }

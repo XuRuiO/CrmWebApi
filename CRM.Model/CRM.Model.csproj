@@ -13,4 +13,8 @@
     <PackageReference Include="sqlSugarCore" Version="5.0.0.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Generate\" />
+  </ItemGroup>
+
 </Project>
