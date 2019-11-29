@@ -168,7 +168,7 @@ namespace CRM.WebAdmin.Api
             {
                 option.SwaggerEndpoint("/swagger/V1/swagger.json", "CRM API V1");
                 //如果想直接在域名的根目录直接加载 swagger 比如访问：localhost:8001 就能访问，可以这样设置：
-                /*option.RoutePrefix = "";*/     //路径配置，设置为空，表示直接访问该文件
+                option.RoutePrefix = "";     //路径配置，设置为空，表示直接访问该文件
                 //路径配置，设置为空，表示直接在根域名（localhost:8001）访问该文件,注意localhost:8001/swagger是访问不到的，
                 //这个时候去launchSettings.json中把"launchUrl": "swagger/index.html"去掉， 然后直接访问localhost:8001/index.html即可
             });

@@ -54,5 +54,32 @@ namespace CRM.Core.Helpers
         {
             return AppSettingsHelper.AppSetting("Cache:RedisCache:ConnectionString");
         }
+
+        /// <summary>
+        /// 获取JWT(playload配置),接收jwt的一方
+        /// </summary>
+        /// <returns></returns>
+        public static string GetJwtAudienceAud()
+        {
+            return AppSettingsHelper.AppSetting("Audience:Audience");
+        }
+
+        /// <summary>
+        /// 获取JWT(playload配置),jwt的签发者
+        /// </summary>
+        /// <returns></returns>
+        public static string GetJwtAudienceIssuer()
+        {
+            return AppSettingsHelper.AppSetting("Audience:Issuer");
+        }
+
+        /// <summary>
+        /// 获取jwt加密的密钥
+        /// </summary>
+        /// <returns></returns>
+        public static string GetJwtAudienceSecret()
+        {
+            return AppSettingsHelper.AppSetting("Audience:Secret");
+        }
     }
 }

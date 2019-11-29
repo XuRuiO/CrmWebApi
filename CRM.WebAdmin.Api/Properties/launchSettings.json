@@ -1,27 +1,24 @@
 ﻿{
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
+    "windowsAuthentication": false, //启用Windows身份验证
+    "anonymousAuthentication": true, //启用匿名身份验证
     "iisExpress": {
-      "applicationUrl": "http://localhost:50586",
-      //创建项目时，如果勾选了Https的话，将sslPort：0，可以取消Https
-      "sslPort": 0
+      "applicationUrl": "http://localhost:50586", //应用启动的Url路径
+      "sslPort": 0 //创建项目时，如果勾选了Https的话，将sslPort：0，可以取消Https
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "environmentVariables": {
+      "launchBrowser": true, //是否在浏览器中启动
+      "environmentVariables": { //将环境变量设置为键/值对
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "CRM.WebAdmin.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
