@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CRM.Model.ViewPageModels
+namespace CRM.Model.RequestModels
 {
     /// <summary>
     /// 基类查询分页模型（请求）,需要分页查询的请继承该类
     /// </summary>
-    public class BaseQueryPageModel
+    public class BaseQueryPageRequestModel
     {
         /// <summary>
         /// 页码

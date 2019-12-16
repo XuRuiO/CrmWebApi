@@ -16,7 +16,7 @@ using CRM.Model.ViewPageModels;
 
 namespace CRM.Service.Services
 {
-    public class UserService : BaseService<UserModel>, IUserService
+    public class UserService : BaseService<User>, IUserService
     {
         private IUserRepository usersRepository;
 
@@ -26,9 +26,27 @@ namespace CRM.Service.Services
             this.usersRepository = usersRepository;
         }
 
+        public async Task<(bool result, string message, UserInfoView userInfoView)> Login(string userName, string password)
+        {
+            //根据用户名，密码获取用户信息
+            var userData = await baseDal.QueryFirstAsync(x => x.UserName == userName && x.Password == password);
+            if (userData == null)
+            {
+                return (false, "用户名或密码不正确", null);
+            }
+
+            var userInfoView = new UserInfoView
+            {
+                Id = userData.Id,
+                RoleName = "管理员"
+            };
+
+            return (true, "登陆成功", userInfoView);
+        }
+
         public async Task<(bool result, string message)> AddUsersAsync(UserAddRequest addRequest)
         {
-            var usersModel = new UserModel()
+            var usersModel = new User()
             {
                 Id = Guid.NewGuid(),
                 Name = addRequest.Name
@@ -41,11 +59,11 @@ namespace CRM.Service.Services
 
         public async Task<(bool result, string message)> AddListUsersAsync(List<UserAddRequest> addRequests)
         {
-            var usersModelList = new List<UserModel>();
+            var usersModelList = new List<User>();
 
             foreach (var item in addRequests)
             {
-                var usersModel = new UserModel()
+                var usersModel = new User()
                 {
                     Id = Guid.NewGuid(),
                     Name = item.Name
@@ -61,7 +79,7 @@ namespace CRM.Service.Services
 
         public async Task<List<dynamic>> GetUserRoleModelsAsync()
         {
-            return await baseDal.QueryMuchAnonymityAsync<UserRoleModel, RoleModel, dynamic>
+            return await baseDal.QueryMuchAnonymityAsync<UserRole, Role, dynamic>
                 (
                     (t1, t2) => new JoinQueryInfos(JoinType.Inner, t1.RoleId == t2.Id),
                     (t1, t2) => new { Id = t1.Id, RoleName = t2.Name },
@@ -73,13 +91,13 @@ namespace CRM.Service.Services
         }
 
         [MemoryCache]
-        public async Task<BasePageModel<UserModel>> GetListPage(string name)
+        public async Task<BasePageModel<User>> GetListPage(string name)
         {
             var pageInfo = new SqlSugarPageInfo() { PageIndex = 1, PageSize = 5 };
 
             var result = await baseDal.QueryConditionPageAsync(null, pageInfo);
 
-            return new BasePageModel<UserModel>
+            return new BasePageModel<User>
             {
                 Models = result,
                 Total = pageInfo.TotalCount

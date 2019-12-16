@@ -4,6 +4,7 @@ using System.Text;
 using CRM.Core.Helpers;
 using System.Linq;
 using SqlSugar;
+using CRM.Core;
 
 namespace CRM.Repository.SqlSugarOrm
 {
@@ -34,6 +35,16 @@ namespace CRM.Repository.SqlSugarOrm
                         IsAutoRemoveDataCache = true,        //为true表示可以自动删除二级缓存
                         IsWithNoLockQuery = true        //true表式无锁模式，查询的时候默认会加上.With(SqlWith.NoLock)，可以用With(SqlWith.Null)让全局的失效
                     }
+                });
+
+                //暂时只支持查询单表全局过滤器
+                _DB.QueryFilter.Add(new SqlFilterItem()
+                {
+                    FilterValue = filterDb =>
+                    {
+                        return new SqlFilterResult() { Sql = $"Enabled={(int)Enums.TableEnabled.启用} AND Deleted={(int)Enums.TableDeleted.未删除}" };
+                    },
+                    IsJoinQuery = false
                 });
 
                 //是否启用SqlSugar 打印sql日志功能

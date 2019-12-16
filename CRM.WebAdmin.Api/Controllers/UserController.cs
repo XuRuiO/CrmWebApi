@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Castle.Core.Logging;
 using CRM.Core.Models;
 using CRM.IService.IServices;
 using CRM.Model.Models;
@@ -68,7 +67,7 @@ namespace CRM.WebAdmin.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<Result<BasePageModel<UserModel>>> GetListPage(string name = "徐")
+        public async Task<Result<BasePageModel<User>>> GetListPage(string name = "徐")
         {
             var result = await userService.GetListPage(name);
 

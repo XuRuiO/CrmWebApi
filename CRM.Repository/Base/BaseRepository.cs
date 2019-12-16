@@ -190,20 +190,36 @@ namespace CRM.Repository.Base
         /// 查询数量
         /// </summary>
         /// <param name="where">查询条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<long> QueryCountAsync(Expression<Func<T, bool>> where)
+        public async Task<long> QueryCountAsync(Expression<Func<T, bool>> where, bool isClearFilter = false)
         {
-            return await db.Queryable<T>().Where(where).CountAsync();
+            var query = db.Queryable<T>();
+
+            if (isClearFilter)
+            {
+                query = query.Filter(null, true);
+            }
+
+            return await query.Where(where).CountAsync();
         }
 
         /// <summary>
         /// 查询单条
         /// </summary>
         /// <param name="where">查询条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where)
+        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, bool isClearFilter = false)
         {
-            return await db.Queryable<T>().Where(where).FirstAsync();
+            var query = db.Queryable<T>();
+
+            if (isClearFilter)
+            {
+                query = query.Filter(null, true);
+            }
+
+            return await query.Where(where).FirstAsync();
         }
 
         /// <summary>
@@ -211,10 +227,18 @@ namespace CRM.Repository.Base
         /// </summary>
         /// <param name="where">查询条件</param>
         /// <param name="orders">排序条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
+        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isClearFilter = false)
         {
-            var query = db.Queryable<T>().Where(where);
+            var query = db.Queryable<T>();
+
+            if (isClearFilter)
+            {
+                query = query.Filter(null, true);
+            }
+
+            query = query.Where(where);
 
             if (orders != null)
             {
@@ -228,20 +252,36 @@ namespace CRM.Repository.Base
         /// 查询全部
         /// </summary>
         /// <param name="isNoLock"></param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync()
+        public async Task<List<T>> QueryAllAsync(bool isClearFilter = false)
         {
-            return await db.Queryable<T>().ToListAsync();
+            var query = db.Queryable<T>();
+
+            if (isClearFilter)
+            {
+                query = query.Filter(null, true);
+            }
+
+            return await query.ToListAsync();
         }
 
         /// <summary>
         /// 查询全部
         /// </summary>
         /// <param name="where">查询条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where)
+        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, bool isClearFilter = false)
         {
-            return await db.Queryable<T>().Where(where).ToListAsync();
+            var query = db.Queryable<T>();
+
+            if (isClearFilter)
+            {
+                query = query.Filter(null, true);
+            }
+
+            return await query.Where(where).ToListAsync();
         }
 
         /// <summary>
@@ -249,10 +289,18 @@ namespace CRM.Repository.Base
         /// </summary>
         /// <param name="where">查询条件</param>
         /// <param name="orders">排序条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
+        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isClearFilter = false)
         {
-            var query = db.Queryable<T>().Where(where);
+            var query = db.Queryable<T>();
+
+            if (isClearFilter)
+            {
+                query = query.Filter(null, true);
+            }
+
+            query = query.Where(where);
 
             if (orders != null)
             {
@@ -269,9 +317,16 @@ namespace CRM.Repository.Base
         /// <param name="pageInfo">分页信息</param>
         /// <param name="orders">排序条件</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null)
+        public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null, bool isClearFilter = false)
         {
-            var query = db.Queryable<T>().WhereIF(where != null, where);
+            var query = db.Queryable<T>();
+
+            if (isClearFilter)
+            {
+                query = query.Filter(null, true);
+            }
+
+            query = query.WhereIF(where != null, where);
 
             if (orders != null)
             {

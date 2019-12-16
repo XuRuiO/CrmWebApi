@@ -110,50 +110,56 @@ namespace CRM.Service.Base
         /// 查询数量
         /// </summary>
         /// <param name="where">查询条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<long> QueryCountAsync(Expression<Func<T, bool>> where)
-            => await baseDal.QueryCountAsync(where);
+        public async Task<long> QueryCountAsync(Expression<Func<T, bool>> where, bool isClearFilter = false)
+            => await baseDal.QueryCountAsync(where, isClearFilter);
 
         /// <summary>
         /// 查询单条
         /// </summary>
         /// <param name="where">查询条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where)
-            => await baseDal.QueryFirstAsync(where);
+        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, bool isClearFilter = false)
+            => await baseDal.QueryFirstAsync(where, isClearFilter);
 
         /// <summary>
         /// 查询单条，可以根据条件排序
         /// </summary>
         /// <param name="where">查询条件</param>
         /// <param name="orders">排序条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
-            => await baseDal.QueryFirstAsync(where, orders);
+        public async Task<T> QueryFirstAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isClearFilter = false)
+            => await baseDal.QueryFirstAsync(where, orders, isClearFilter);
 
         /// <summary>
         /// 查询全部
         /// </summary>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync()
-            => await baseDal.QueryAllAsync();
+        public async Task<List<T>> QueryAllAsync(bool isClearFilter = false)
+            => await baseDal.QueryAllAsync(isClearFilter);
 
         /// <summary>
         /// 查询全部
         /// </summary>
         /// <param name="where">查询条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where)
-            => await baseDal.QueryAllAsync(where);
+        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, bool isClearFilter = false)
+            => await baseDal.QueryAllAsync(where, isClearFilter);
 
         /// <summary>
         /// 查询全部
         /// </summary>
         /// <param name="where">查询条件</param>
         /// <param name="orders">排序条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders)
-            => await baseDal.QueryAllAsync(where, orders);
+        public async Task<List<T>> QueryAllAsync(Expression<Func<T, bool>> where, List<SqlSugarOrder<T>> orders, bool isClearFilter = false)
+            => await baseDal.QueryAllAsync(where, orders, isClearFilter);
 
         /// <summary>
         /// 条件分页查询，单表
@@ -161,9 +167,10 @@ namespace CRM.Service.Base
         /// <param name="where">查询条件</param>
         /// <param name="pageInfo">分页信息</param>
         /// <param name="orders">排序条件</param>
+        /// <param name="isClearFilter">是否关闭全局过滤器</param>
         /// <returns></returns>
-        public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null)
-            => await baseDal.QueryConditionPageAsync(where, pageInfo, orders);
+        public async Task<List<T>> QueryConditionPageAsync(Expression<Func<T, bool>> where, SqlSugarPageInfo pageInfo, List<SqlSugarOrder<T>> orders = null, bool isClearFilter = false)
+            => await baseDal.QueryConditionPageAsync(where, pageInfo, orders, isClearFilter);
 
         #endregion
 

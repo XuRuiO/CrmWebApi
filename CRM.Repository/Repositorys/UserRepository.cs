@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CRM.Repository.Repositorys
 {
-    public class UserRepository : BaseRepository<UserModel>, IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
 
     }

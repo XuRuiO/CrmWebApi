@@ -33,7 +33,7 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Jti,tokenModelJWT.Uid.ToString()),        //jti:为JWT提供了唯一的标识符
+                new Claim(JwtRegisteredClaimNames.Jti,tokenModelJWT.Id),        //jti:为JWT提供了唯一的标识符
                 new Claim(JwtRegisteredClaimNames.Iat,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"),     //jwt的签发时间
                 new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"),     //生效时间，定义在什么时间之前，该jwt都是不可用的
                 new Claim(JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(1000)).ToUnixTimeSeconds()}"),      //jwt的过期时间，这个过期时间必须要大于签发时间
@@ -47,25 +47,10 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
             claims.AddRange(tokenModelJWT.Role.Split(',').Select(x => new Claim(ClaimTypes.Role, x)));
 
             //秘钥 (SymmetricSecurityKey 对安全性的要求，密钥的长度太短会报出异常)
-
-
-            //var dateTime = DateTime.UtcNow;
-            //var claims = new Claim[]
-            //{
-            //    new Claim(JwtRegisteredClaimNames.Jti,tokenModelJWT.Uid.ToString()),
-            //    new Claim("Role",tokenModelJWT.Role),
-            //    new Claim(JwtRegisteredClaimNames.Iat,dateTime.ToString(),ClaimValueTypes.Integer64)
-            //};
-            ////密钥
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secreKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var jwt = new JwtSecurityToken(
-                issuer: "CRM.Core",
-                claims: claims,     //声明集合
-                expires: dateTime.AddHours(2),
-                signingCredentials: creds
-                );
+            var jwt = new JwtSecurityToken(issuer: iss, claims: claims, signingCredentials: creds);
 
             var jwtHandler = new JwtSecurityTokenHandler();
             var encodedJwt = jwtHandler.WriteToken(jwt);
@@ -82,10 +67,10 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
         {
             var jwtHandler = new JwtSecurityTokenHandler();
             JwtSecurityToken jwtSecurityToken = jwtHandler.ReadJwtToken(jwtStr);
-            object role = new object();
+            object role;
             try
             {
-                jwtSecurityToken.Payload.TryGetValue("Role", out role);
+                jwtSecurityToken.Payload.TryGetValue(ClaimTypes.Role, out role);
             }
             catch (Exception)
             {
@@ -93,8 +78,8 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
             }
             var modelJWT = new TokenModelJWT
             {
-                Uid = (jwtSecurityToken.Id).ObjToInt(),
-                Role = role.ObjToString()
+                Id = jwtSecurityToken.Id,
+                Role = role != null ? role.ObjToString() : ""
             };
 
             return modelJWT;
@@ -109,16 +94,11 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
         /// <summary>
         /// Id
         /// </summary>
-        public long Uid { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 角色
         /// </summary>
         public string Role { get; set; }
-
-        /// <summary>
-        /// 职能
-        /// </summary>
-        public string Work { get; set; }
     }
 }

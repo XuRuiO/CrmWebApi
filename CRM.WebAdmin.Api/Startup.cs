@@ -95,7 +95,7 @@ namespace CRM.WebAdmin.Api
                 x.AddPolicy("LimitRequests", policy =>
                 {
                     policy
-                    .WithOrigins("http://127.0.0.1:1818")   //支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
+                    .WithOrigins("http://127.0.0.1:1002", "http://localhost:1002")   //支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
                     .AllowAnyHeader()
                     .AllowAnyMethod();
                 });

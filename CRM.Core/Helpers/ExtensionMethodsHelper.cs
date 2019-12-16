@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace CRM.Core.Helpers
@@ -43,6 +46,20 @@ namespace CRM.Core.Helpers
             {
                 return string.Empty;
             }
+        }
+
+        /// <summary>
+        /// 获取枚举项描述信息，Description
+        /// </summary>
+        /// <param name="value">枚举项，如EnumSex.Man</param>
+        /// <returns></returns>
+        public static string GetEnumDescription(this Enum value)
+        {
+            return value.GetType()
+                .GetMember(value.ToString())
+                .FirstOrDefault()?
+                .GetCustomAttribute<DescriptionAttribute>()?
+                .Description;
         }
     }
 }

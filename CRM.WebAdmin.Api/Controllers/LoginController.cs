@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using CRM.Core.Models;
+using CRM.IService.IServices;
 using CRM.WebAdmin.Api.AuthHelper.OverWrite;
 using CRM.WebAdmin.Api.Common;
 using Microsoft.AspNetCore.Http;
@@ -16,17 +19,53 @@ namespace CRM.WebAdmin.Api.Controllers
     [ApiController]
     public class LoginController : BaseController
     {
-        [HttpGet("GetJWTStr")]
-        public ActionResult GetJWTStr(long id = 1, string sub = "Admin")
+        private IUserService _userService;
+
+        //构造函数注入
+        public LoginController(IUserService userService)
         {
-            //这里就是用户登陆以后，通过数据库去调取数据，分配权限的操作
-            TokenModelJWT tokenModelJWT = new TokenModelJWT();
-            tokenModelJWT.Uid = id;
-            tokenModelJWT.Role = sub;
+            this._userService = userService;
+        }
 
-            string jwtstr = JwtHelper.IssueJWT(tokenModelJWT);
+        /// <summary>
+        /// 用户登陆，登陆成功返回Token给用户；登陆失败，返回错误信息
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
+        [HttpGet("Login")]
+        public async Task<Result<string>> Login(string userName, string password)
+        {
+            #region 数据验证
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Error<string>((int)ApiResponseStatusCode.Error, "请输入用户名！");
+            }
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return Error<string>((int)ApiResponseStatusCode.Error, "请输入密码！");
+            }
+            #endregion
 
-            return Ok(jwtstr);
+            var result = await _userService.Login(userName, password);
+
+            if (!result.result)
+            {
+                return Error<string>((int)ApiResponseStatusCode.Error, result.message);
+            }
+            else
+            {
+                //生成JWT令牌
+                TokenModelJWT tokenModelJWT = new TokenModelJWT
+                {
+                    Id = result.userInfoView.Id.ToString(),
+                    Role = result.userInfoView.RoleName
+                };
+
+                string jwtStr = JwtHelper.IssueJWT(tokenModelJWT);
+
+                return Success<string>(result.message, jwtStr);
+            }
         }
     }
 }

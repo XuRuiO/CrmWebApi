@@ -65,7 +65,7 @@ namespace CRM.WebAdmin.Api.Common
         }
 
         /// <summary>
-        /// 请求失败，无返回值
+        /// 请求失败，有返回值
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="StatusCode">错误状态码</param>
