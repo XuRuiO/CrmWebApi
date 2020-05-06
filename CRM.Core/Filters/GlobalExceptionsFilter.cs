@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using CRM.Core.Exceptions;
+using CRM.Core.CustomExtensions;
 using CRM.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CRM.Core.Filters
 {
@@ -35,6 +37,16 @@ namespace CRM.Core.Filters
             {
                 response.StatusCode = (int)exception.apiResponseStatusCode;
                 response.Message = exception.Message;
+
+                //是否记录日志
+                if (exception.IsWriteLog)
+                {
+                    //记录异常日志格式
+                    string exceptionLog = string.Format(" \r\n【异常类型】：{0} \r\n【异常信息】：{1} \r\n【堆栈调用】：{2}",
+                        new object[] { context.Exception.GetType().Name, context.Exception.Message, context.Exception.StackTrace });
+
+                    logger.LogError($"WebApi 发生异常 message：{exceptionLog}");
+                }
             }
             else
             {
@@ -48,8 +60,12 @@ namespace CRM.Core.Filters
                 logger.LogError($"WebApi 发生异常 message：{exceptionLog}");
             }
 
+            //Json序列化配置，取消默认驼峰
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new DefaultContractResolver();
+
             //将异常信息返回
-            context.Result = new JsonResult(response);
+            context.Result = new JsonResult(response, serializerSettings);
         }
     }
 }

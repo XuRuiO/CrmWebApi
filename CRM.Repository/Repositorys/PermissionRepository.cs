@@ -1,4 +1,4 @@
-﻿using CRM.IRepository.IRepositorys;
+using CRM.IRepository.IRepositorys;
 using CRM.IRepository.IUnitOfWork;
 using CRM.Model.Models;
 using CRM.Repository.Base;
@@ -8,11 +8,12 @@ using System.Text;
 
 namespace CRM.Repository.Repositorys
 {
-    public class UserRepository : BaseRepository<User>, IUserRepository
+    public class PermissionRepository : BaseRepository<Permission>, IPermissionRepository
     {
-        public UserRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public PermissionRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
 
         }
     }
 }
+

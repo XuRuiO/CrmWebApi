@@ -25,7 +25,16 @@ namespace CRM.Core.Helpers
         /// <returns></returns>
         public static bool GetIsEnableSqlSugarLog()
         {
-            return TypeConversionHelper.StringToBool(AppSettingsHelper.AppSetting("IsEnableSqlSugarLog"));
+            return AppSettingsHelper.AppSetting("IsEnableSqlSugarLog").StringToBool();
+        }
+
+        /// <summary>
+        /// 获取是否启用SwaggerApi文档（生产环境，需要关闭对外开放的SwaggerApi文档）
+        /// </summary>
+        /// <returns></returns>
+        public static bool GetIsEnableSwaggerApiDocument()
+        {
+            return AppSettingsHelper.AppSetting("IsEnableSwaggerApiDocument").StringToBool();
         }
 
         /// <summary>
@@ -43,7 +52,7 @@ namespace CRM.Core.Helpers
         /// <returns></returns>
         public static bool GetRedisCacheEnabled()
         {
-            return TypeConversionHelper.StringToBool(AppSettingsHelper.AppSetting("Cache:RedisCache:Enabled"));
+            return AppSettingsHelper.AppSetting("Cache:RedisCache:Enabled").StringToBool();
         }
 
         /// <summary>
@@ -80,6 +89,15 @@ namespace CRM.Core.Helpers
         public static string GetJwtAudienceSecret()
         {
             return AppSettingsHelper.AppSetting("Audience:Secret");
+        }
+
+        /// <summary>
+        /// 获取jwtToken有效期（单位：秒）
+        /// </summary>
+        /// <returns></returns>
+        public static int GetJwtAudienceAccessTokenExpiration()
+        {
+            return AppSettingsHelper.AppSetting("Audience:AccessTokenExpiration").ObjToInt();
         }
     }
 }

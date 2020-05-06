@@ -24,8 +24,8 @@ namespace CRM.IService.IServices
 
         Task<(bool result, string message)> AddListUsersAsync(List<UserAddRequest> addRequests);
 
-        Task<List<dynamic>> GetUserRoleModelsAsync();
-
         Task<BasePageModel<User>> GetListPage(string name);
+
+        Task<List<dynamic>> GetUserRoleModelsAsync();
     }
 }

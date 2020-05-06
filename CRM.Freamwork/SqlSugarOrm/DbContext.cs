@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using CRM.Core;
 using CRM.Core.Helpers;
-using System.Linq;
 using SqlSugar;
-using CRM.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace CRM.Repository.SqlSugarOrm
+namespace CRM.Freamwork.SqlSugarOrm
 {
     /// <summary>
-    /// 2019.02.23      Rui     SqlSugarOrm 数据库上下文对象
+    /// 2020.01.01     SqlSugarOrm 数据库上下文对象
     /// </summary>
     public class DbContext
     {
@@ -28,7 +28,7 @@ namespace CRM.Repository.SqlSugarOrm
                     ConnectionString = DbConfig.ConnectionString,       //连接字符串
                     DbType = DbType.SqlServer,      //数据库类型
                     IsAutoCloseConnection = true,     //(默认false)是否自动释放数据库，设为true我们不需要close或者Using的操作，比较推荐
-                    InitKeyType = InitKeyType.SystemTable,    //默认SystemTable, 字段信息读取, 如：该属性是不是主键，是不是标识列等等信息
+                    InitKeyType = InitKeyType.Attribute,    //默认SystemTable：从数据库系统表查询；Attribute：不受数据库限制通过实体特性读取
                     IsShardSameThread = true,     //设为true相同线程是同一个SqlConnection
                     MoreSettings = new ConnMoreSettings
                     {

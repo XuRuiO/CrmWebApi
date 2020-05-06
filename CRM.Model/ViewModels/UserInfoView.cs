@@ -12,7 +12,7 @@ namespace CRM.Model.ViewModels
         /// <summary>
         /// 主键Id
         /// </summary>
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// 角色名称（多个角色的话，拼接起来）

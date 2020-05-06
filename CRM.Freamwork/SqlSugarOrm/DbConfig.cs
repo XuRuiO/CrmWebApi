@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CRM.Repository.SqlSugarOrm
+namespace CRM.Freamwork.SqlSugarOrm
 {
     /// <summary>
-    /// 2019.02.23      Rui     获取数据库连接字符串
+    /// 2020.01.01      获取数据库连接字符串
     /// </summary>
     public class DbConfig
     {

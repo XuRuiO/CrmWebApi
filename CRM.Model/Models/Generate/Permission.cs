@@ -6,13 +6,17 @@ using SqlSugar;
 namespace CRM.Model.Models
 {
     ///<summary>
-    ///角色信息表
+    ///路由菜单信息表
     ///</summary>
-    [SugarTable("T_Role")]
-    public partial class Role
+    [SugarTable("T_Permission")]
+    public partial class Permission
     {
-        public Role()
+        public Permission()
         {
+            this.ParentId = Convert.ToInt32("0");
+            this.IsHidden = false;
+            this.IsAffix = false;
+            this.IsUseLayout = true;
             this.TerminalType = Convert.ToInt32("4");
             this.Enabled = Convert.ToInt32("1");
             this.Deleted = Convert.ToInt32("0");
@@ -26,9 +30,49 @@ namespace CRM.Model.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// 角色名称
+        /// 父Id
         /// </summary>        
-        public string Name { get; set; }
+        public int? ParentId { get; set; }
+
+        /// <summary>
+        /// 路由地址
+        /// </summary>        
+        public string Path { get; set; }
+
+        /// <summary>
+        /// 重定向地址（输入父路径，跳转到指定的子路劲）
+        /// </summary>        
+        public string Redirect { get; set; }
+
+        /// <summary>
+        /// 菜单名称
+        /// </summary>        
+        public string Title { get; set; }
+
+        /// <summary>
+        /// 菜单图标
+        /// </summary>        
+        public string Icon { get; set; }
+
+        /// <summary>
+        /// 是否隐藏菜单在侧边导航栏出现
+        /// </summary>        
+        public bool? IsHidden { get; set; }
+
+        /// <summary>
+        /// 是否固钉在tagsView中，不可被删除
+        /// </summary>        
+        public bool? IsAffix { get; set; }
+
+        /// <summary>
+        /// 是否使用Layout布局，基本上父导航为True
+        /// </summary>        
+        public bool? IsUseLayout { get; set; }
+
+        /// <summary>
+        /// 排序序号
+        /// </summary>        
+        public int? OrderSort { get; set; }
 
         /// <summary>
         /// 请求接口的终端类型：1（Ios），2（Android），3（WeChat）,4（PC）

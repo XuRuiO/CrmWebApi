@@ -6,12 +6,12 @@ using SqlSugar;
 namespace CRM.Model.Models
 {
     ///<summary>
-    ///角色信息表
+    ///客户信息表
     ///</summary>
-    [SugarTable("T_Role")]
-    public partial class Role
+    [SugarTable("T_Customer")]
+    public partial class Customer
     {
-        public Role()
+        public Customer()
         {
             this.TerminalType = Convert.ToInt32("4");
             this.Enabled = Convert.ToInt32("1");
@@ -20,13 +20,13 @@ namespace CRM.Model.Models
             this.Modified = DateTime.Now;
         }
         /// <summary>
-        /// 主键Id
+        /// 
         /// </summary>        
         [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
         public int Id { get; set; }
 
         /// <summary>
-        /// 角色名称
+        /// 姓名
         /// </summary>        
         public string Name { get; set; }
 

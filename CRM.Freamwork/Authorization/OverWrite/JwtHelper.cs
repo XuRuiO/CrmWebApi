@@ -7,16 +7,13 @@ using System.Security.Claims;
 using System.Text;
 using System.Linq;
 
-namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
+namespace CRM.Freamwork.Authorization.OverWrite
 {
     /// <summary>
-    /// 2018.12.20      Rui     生成Token，和Token反序列成model
+    /// 2018.12.20      Rui     JWTToken生成帮助类，本系统中将不使用该方式，使用基于策略授权方式
     /// </summary>
     public class JwtHelper
     {
-        //定义一个私钥
-        public static string secreKey { get; set; } = "sdfsdfsrty45634kkhllghtdgdfss345t678fs";
-
         /// <summary>
         /// 颁发JWT字符串
         /// </summary>
@@ -30,18 +27,18 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
             string aud = ConfigsHelper.GetJwtAudienceAud();
             //密钥
             string secret = ConfigsHelper.GetJwtAudienceSecret();
+            //jwtToken有效期
+            int accessTokenExpiration = ConfigsHelper.GetJwtAudienceAccessTokenExpiration();
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Jti,tokenModelJWT.Id),        //jti:为JWT提供了唯一的标识符
+                new Claim(JwtRegisteredClaimNames.Jti,tokenModelJWT.Id.ToString()),        //jti:为JWT提供了唯一的标识符
                 new Claim(JwtRegisteredClaimNames.Iat,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"),     //jwt的签发时间
                 new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"),     //生效时间，定义在什么时间之前，该jwt都是不可用的
-                new Claim(JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(1000)).ToUnixTimeSeconds()}"),      //jwt的过期时间，这个过期时间必须要大于签发时间
+                new Claim(JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(accessTokenExpiration)).ToUnixTimeSeconds()}"),      //jwt的过期时间，这个过期时间必须要大于签发时间
                 new Claim(JwtRegisteredClaimNames.Iss,iss),
                 new Claim(JwtRegisteredClaimNames.Aud,aud)
             };
-
-            claims.Any();
 
             //可以将一个用户的多个角色全部赋予
             claims.AddRange(tokenModelJWT.Role.Split(',').Select(x => new Claim(ClaimTypes.Role, x)));
@@ -78,7 +75,7 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
             }
             var modelJWT = new TokenModelJWT
             {
-                Id = jwtSecurityToken.Id,
+                Id = jwtSecurityToken.Id.ObjToInt(),
                 Role = role != null ? role.ObjToString() : ""
             };
 
@@ -94,7 +91,7 @@ namespace CRM.WebAdmin.Api.AuthHelper.OverWrite
         /// <summary>
         /// Id
         /// </summary>
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// 角色

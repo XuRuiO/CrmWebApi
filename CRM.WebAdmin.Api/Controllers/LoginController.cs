@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
+using CRM.Core.CustomExtensions;
+using CRM.Core.Helpers;
 using CRM.Core.Models;
+using CRM.Core.ThirdPartyHelper;
+using CRM.Freamwork;
 using CRM.IService.IServices;
-using CRM.WebAdmin.Api.AuthHelper.OverWrite;
-using CRM.WebAdmin.Api.Common;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRM.WebAdmin.Api.Controllers
@@ -33,17 +33,17 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <param name="userName">用户名</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        [HttpGet("Login")]
+        [HttpPost("Login")]
         public async Task<Result<string>> Login(string userName, string password)
         {
             #region 数据验证
             if (string.IsNullOrWhiteSpace(userName))
             {
-                return Error<string>((int)ApiResponseStatusCode.Error, "请输入用户名！");
+                throw new CustomerException("请输入用户名", ApiResponseStatusCode.ParameterError);
             }
             if (string.IsNullOrWhiteSpace(password))
             {
-                return Error<string>((int)ApiResponseStatusCode.Error, "请输入密码！");
+                throw new CustomerException("请输入密码", ApiResponseStatusCode.ParameterError);
             }
             #endregion
 
@@ -51,20 +51,11 @@ namespace CRM.WebAdmin.Api.Controllers
 
             if (!result.result)
             {
-                return Error<string>((int)ApiResponseStatusCode.Error, result.message);
+                return Error<string>((int)ApiResponseStatusCode.ParameterError, result.message);
             }
             else
             {
-                //生成JWT令牌
-                TokenModelJWT tokenModelJWT = new TokenModelJWT
-                {
-                    Id = result.userInfoView.Id.ToString(),
-                    Role = result.userInfoView.RoleName
-                };
-
-                string jwtStr = JwtHelper.IssueJWT(tokenModelJWT);
-
-                return Success<string>(result.message, jwtStr);
+                return Success<string>(result.message, "");
             }
         }
     }

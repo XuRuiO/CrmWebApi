@@ -72,7 +72,7 @@ namespace CRM.Freamwork.Swagger
             //      如果使用官方认证中间件，Token传递的时候，也必须带上"Bearer " 这样的特定字符串
             options.AddSecurityDefinition("CRM.Core", new ApiKeyScheme
             {
-                Description = "JWT授权(数据将在请求头中进行传输) 直接在下框中输入 {token} ",
+                Description = "JWT授权(数据将在请求头中进行传输) 直接在下框中输入Bearer {token}（注意两者之间是一个空格）",
                 Name = "Authorization",     //jwt默认的参数名称
                 In = "header",        //jwt默认存放Authorization信息的位置（请求头中）
                 Type = "apiKey"

@@ -18,12 +18,12 @@ namespace CRM.Service.Services
 {
     public class UserService : BaseService<User>, IUserService
     {
-        private IUserRepository usersRepository;
+        private IUserRepository userRepository;
 
         public UserService(IUserRepository usersRepository)
         {
             this.baseDal = usersRepository;
-            this.usersRepository = usersRepository;
+            this.userRepository = usersRepository;
         }
 
         public async Task<(bool result, string message, UserInfoView userInfoView)> Login(string userName, string password)
@@ -37,7 +37,7 @@ namespace CRM.Service.Services
 
             var userInfoView = new UserInfoView
             {
-                Id = userData.Id,
+                Id = userData.Id.ObjToInt(),
                 RoleName = "管理员"
             };
 
@@ -48,7 +48,6 @@ namespace CRM.Service.Services
         {
             var usersModel = new User()
             {
-                Id = Guid.NewGuid(),
                 Name = addRequest.Name
             };
 
@@ -65,7 +64,6 @@ namespace CRM.Service.Services
             {
                 var usersModel = new User()
                 {
-                    Id = Guid.NewGuid(),
                     Name = item.Name
                 };
 
@@ -75,19 +73,6 @@ namespace CRM.Service.Services
             var result = await baseDal.AddListAsync(usersModelList, SqlSugarEnums.SqlSugarAddReturnAction.IdentityIntoEntity);
 
             return result ? (true, "新增成功！") : (false, "新增失败！");
-        }
-
-        public async Task<List<dynamic>> GetUserRoleModelsAsync()
-        {
-            return await baseDal.QueryMuchAnonymityAsync<UserRole, Role, dynamic>
-                (
-                    (t1, t2) => new JoinQueryInfos(JoinType.Inner, t1.RoleId == t2.Id),
-                    (t1, t2) => new { Id = t1.Id, RoleName = t2.Name },
-                    null,
-                    new List<OrderByClause>() {
-                        new OrderByClause(){ Sort="t2.Name",Order=SqlSugarEnums.OrderSequence.Asc}
-                    }
-                );
         }
 
         [MemoryCache]
@@ -102,6 +87,19 @@ namespace CRM.Service.Services
                 Models = result,
                 Total = pageInfo.TotalCount
             };
+        }
+
+        public async Task<List<dynamic>> GetUserRoleModelsAsync()
+        {
+            return await baseDal.QueryMuchAnonymityAsync<User, Role, dynamic>
+                (
+                    (t1, t2) => new JoinQueryInfos(JoinType.Inner, t1.RoleId.Contains(t2.Id.ToString())),
+                    (t1, t2) => new { Id = t1.Id, RoleName = t2.Name },
+                    null,
+                    new List<OrderByClause>() {
+                        new OrderByClause(){ Sort="t2.Name",Order=SqlSugarEnums.OrderSequence.Asc}
+                    }
+                );
         }
     }
 }

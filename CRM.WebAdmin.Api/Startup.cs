@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CRM.Core.Filters;
 using CRM.Core.Helpers;
+using CRM.Core.Middlewares;
 using CRM.Freamwork.Autofac;
 using CRM.Freamwork.Cache.MemoryCache;
 using CRM.Freamwork.Cache.RedisCache;
 using CRM.Freamwork.GlobalRouting;
+using CRM.Freamwork.SqlSugarOrm;
 using CRM.Freamwork.Swagger;
-using CRM.WebAdmin.Api.AuthHelper.OverWrite;
+using CRM.Model.AutoMapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -19,6 +22,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CRM.WebAdmin.Api
 {
@@ -58,9 +63,27 @@ namespace CRM.WebAdmin.Api
                 //路由参数在此处仍然是有效的，比如添加一个版本号，不需要可以注释
                 //options.UseCentralRoutePrefix(new RouteAttribute("v1"));
 
-                //注入全局异常捕获
+                //注入全局方法过滤器
+                options.Filters.Add(typeof(GlobalActionsFilter));
+                //注入全局异常捕获过滤器
                 options.Filters.Add(typeof(GlobalExceptionsFilter));
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+                //Json序列化配置
+                var serializerSettings = new JsonSerializerSettings();
+
+                //取消默认驼峰
+                serializerSettings.ContractResolver = new DefaultContractResolver();
+                //格式化DateTime类型
+                serializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+                //统一处理 webapi 返回null 转为“”
+                options.OutputFormatters.Insert(0, new JsonOutputFormatterHelper(serializerSettings));
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                //关闭默认自带的400模型验证 [ApiController]
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             #region 2019.08.11      Rui     部分服务注入，netcore自带方法
 
@@ -92,10 +115,21 @@ namespace CRM.WebAdmin.Api
                 //↑↑↑↑↑↑↑注意正式环境不要使用这种全开放的处理↑↑↑↑↑↑↑↑↑↑
 
                 //方法二，一般采用这种方法
+
+                //允许所有请求跨域（正式环境不要开放，仅限于测试环境多人测试）
+                //x.AddPolicy("LimitRequests", policy =>
+                //{
+                //    policy
+                //    .AllowAnyOrigin()   //允许任何源
+                //    .AllowAnyMethod()   //允许任何方式
+                //    .AllowAnyHeader()   //允许任何头
+                //    .AllowCredentials();    //允许cookie
+                //});
+
                 x.AddPolicy("LimitRequests", policy =>
                 {
                     policy
-                    .WithOrigins("http://127.0.0.1:1002", "http://localhost:1002")   //支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
+                    .WithOrigins("http://127.0.0.1:1002", "http://localhost:1002", "http://127.0.0.1:40354")   //支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
                     .AllowAnyHeader()
                     .AllowAnyMethod();
                 });
@@ -122,6 +156,19 @@ namespace CRM.WebAdmin.Api
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
                 options.AddPolicy("AdminOrClient", policy => policy.RequireRole("Admin,Client").Build());
             });
+
+            #endregion
+
+            #region 2020.03.08      Rui     AutoMapper注入
+
+            services.AddAutoMapper(typeof(AutoMapperConfig));
+            AutoMapperConfig.RegisterMappings();
+
+            #endregion
+
+            #region 2020.03.15      Rui     SqlSugarClient注入
+
+            services.AddSqlsugarSetup();
 
             #endregion
 
@@ -169,16 +216,15 @@ namespace CRM.WebAdmin.Api
                 option.SwaggerEndpoint("/swagger/V1/swagger.json", "CRM API V1");
                 //如果想直接在域名的根目录直接加载 swagger 比如访问：localhost:8001 就能访问，可以这样设置：
                 option.RoutePrefix = "";     //路径配置，设置为空，表示直接访问该文件
-                //路径配置，设置为空，表示直接在根域名（localhost:8001）访问该文件,注意localhost:8001/swagger是访问不到的，
-                //这个时候去launchSettings.json中把"launchUrl": "swagger/index.html"去掉， 然后直接访问localhost:8001/index.html即可
+                                             //路径配置，设置为空，表示直接在根域名（localhost:8001）访问该文件,注意localhost:8001/swagger是访问不到的，
+                                             //这个时候去launchSettings.json中把"launchUrl": "swagger/index.html"去掉， 然后直接访问localhost:8001/index.html即可
             });
 
             #endregion
 
-            #region 2018.12.20      Rui     使用JwtTokenAuth中间件
+            #region 2020.03.13      Rui     使用请求响应日志记录中间件
 
-            //使用自定义的认证中间件
-            app.UseMiddleware<JwtTokenAuth>();
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
             #endregion
 

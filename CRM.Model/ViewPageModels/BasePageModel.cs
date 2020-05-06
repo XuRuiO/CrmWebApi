@@ -5,7 +5,7 @@ using System.Text;
 namespace CRM.Model.ViewPageModels
 {
     /// <summary>
-    /// 基类分页模型（响应）
+    /// 基类分页模型（响应），不需要继承该类
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class BasePageModel<T>

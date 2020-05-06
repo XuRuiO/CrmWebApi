@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CRM.Core.Models;
+﻿using CRM.Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using MySqlX.XDevAPI.Common;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace CRM.WebAdmin.Api.Common
+namespace CRM.Freamwork
 {
     /// <summary>
-    /// 2019.08.21      Rui     WebApi控制器基类
+    /// 2020.01.01      Rui     WebApi控制器基类
     /// </summary>
     public class BaseController : ControllerBase
     {

@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SqlSugar;
-using CRM.Repository.SqlSugarOrm;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using CRM.Core.Models;
 using System.Linq;
+using CRM.IRepository.IUnitOfWork;
 
 namespace CRM.Repository.Base
 {
@@ -18,16 +18,22 @@ namespace CRM.Repository.Base
     public class BaseRepository<T> : IBaseRepository<T> where T : class, new()
     {
         /// <summary>
-        /// 定义一个私有的SqlSugarClient用来接收DB对象
+        /// 定义一个私有的ISqlSugarClient用来接收注入的 SugarClient 对象
         /// </summary>
-        private SqlSugarClient db { get; set; }
+        private readonly ISqlSugarClient db;
+
+        /// <summary>
+        /// 工作单元的接口，通过构造函数注入
+        /// </summary>
+        private readonly IUnitOfWork unitOfWork;
 
         /// <summary>
         /// 构造函数获取SqlSugarClient对象
         /// </summary>
-        public BaseRepository()
+        public BaseRepository(IUnitOfWork unitOfWork)
         {
-            db = DbContext.DB;
+            db = unitOfWork.GetDbClient();
+            this.unitOfWork = unitOfWork;
         }
 
         #region 新增操作

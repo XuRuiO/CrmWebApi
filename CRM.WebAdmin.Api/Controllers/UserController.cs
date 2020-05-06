@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CRM.Core.Models;
+using CRM.Freamwork;
 using CRM.IService.IServices;
 using CRM.Model.Models;
 using CRM.Model.RequestModels;
 using CRM.Model.ViewPageModels;
-using CRM.WebAdmin.Api.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -41,7 +41,7 @@ namespace CRM.WebAdmin.Api.Controllers
             return result;
         }
 
-        /// <summary>
+        /// <summary> 
         /// 批量新增用户
         /// </summary>
         /// <param name="addInputs"></param>
@@ -50,18 +50,6 @@ namespace CRM.WebAdmin.Api.Controllers
         public async Task<(bool result, string message)> AddListUsers([FromBody]List<UserAddRequest> addRequests)
         {
             var result = await userService.AddListUsersAsync(addRequests);
-
-            return result;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("GetName")]
-        public async Task<List<dynamic>> GetName()
-        {
-            var result = await userService.GetUserRoleModelsAsync();
 
             return result;
         }
