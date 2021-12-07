@@ -37,14 +37,17 @@ namespace CRM.WebAdmin.Api.Controllers
         public async Task<Result<string>> Login(string userName, string password)
         {
             #region 数据验证
+
             if (string.IsNullOrWhiteSpace(userName))
             {
                 throw new CustomerException("请输入用户名", ApiResponseStatusCode.ParameterError);
             }
+
             if (string.IsNullOrWhiteSpace(password))
             {
                 throw new CustomerException("请输入密码", ApiResponseStatusCode.ParameterError);
             }
+
             #endregion
 
             var result = await _userService.Login(userName, password);

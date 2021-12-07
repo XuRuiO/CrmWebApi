@@ -13,11 +13,12 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="sqlSugarCore" Version="5.0.0.14" />
+    <PackageReference Include="sqlSugarCore" Version="5.0.2.8" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Models\Generate\" />
+    <Folder Include="CustomModels\" />
     <Folder Include="CustomModels\" />
   </ItemGroup>
 
