@@ -95,7 +95,7 @@ namespace CRM.Service.Services
             return await baseDal.QueryMuchAnonymityAsync<User, Role, dynamic>
                 (
                     (t1, t2) => new JoinQueryInfos(JoinType.Inner, t1.RoleId.Contains(t2.Id.ToString())),
-                    (t1, t2) => new { Id = t1.Id, RoleName = t2.Name },
+                    (t1, t2) => new { t1.Id, RoleName = t2.Name },
                     null,
                     new List<OrderByClause>() {
                         new OrderByClause(){ Sort="t2.Name",Order=SqlSugarEnums.OrderSequence.Asc}
