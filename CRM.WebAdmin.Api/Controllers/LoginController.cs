@@ -55,7 +55,7 @@ namespace CRM.WebAdmin.Api.Controllers
             }
             else
             {
-                return Success<string>(result.message, "");
+                return Success<string>(result.message, Guid.NewGuid().ToString());
             }
         }
     }

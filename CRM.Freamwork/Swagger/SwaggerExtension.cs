@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace CRM.Freamwork.Swagger
 {
@@ -22,13 +21,22 @@ namespace CRM.Freamwork.Swagger
         {
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("V1", new Info
+                options.SwaggerDoc("V1", new OpenApiInfo
                 {
                     Version = "V1.1.0",
                     Title = "CRM.WebAdmin.Api",
                     Description = "CRM.WebAdmin.Api 框架",
-                    TermsOfService = "None",
-                    Contact = new Contact { Name = "XuRuiO", Email = "xhxy@live.cn", Url = "https://github.com/XuRuiO" }
+                    Contact = new OpenApiContact
+                    {
+                        Name = "XuRuiO",
+                        Email = "xhxy@live.cn",
+                        Url = new Uri("https://github.com/XuRuiO")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "XuRuiO",
+                        Url = new Uri("https://github.com/XuRuiO")
+                    }
                 });
 
                 //添加生成Swagger的文档注释功能
@@ -47,7 +55,8 @@ namespace CRM.Freamwork.Swagger
         /// <param name="options"></param>
         public static void AddDocumentAnnotation(this SwaggerGenOptions options)
         {
-            var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
+            var basePath = AppContext.BaseDirectory;
+            //var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
 
             //获取CRM.WebAdmin.Api XML文档注释
             var xmlApiPath = Path.Combine(basePath, "CRM.WebAdmin.Api.xml");
@@ -65,17 +74,15 @@ namespace CRM.Freamwork.Swagger
         /// <param name="options"></param>
         public static void AddHeaderValidate(this SwaggerGenOptions options)
         {
-            var security = new Dictionary<string, IEnumerable<string>> { { "CRM.Core", new string[] { } } };
-            options.AddSecurityRequirement(security);
             //方案名称“CRM.Core”可自定义，上下一致即可
             //注意：自定义的认证中间件，我们的Token可以不用带 Bearer 特定字符串（即不需要此格式：Bearer {token} ）;
             //      如果使用官方认证中间件，Token传递的时候，也必须带上"Bearer " 这样的特定字符串
-            options.AddSecurityDefinition("CRM.Core", new ApiKeyScheme
+            options.AddSecurityDefinition("CRM.Core", new OpenApiSecurityScheme
             {
                 Description = "JWT授权(数据将在请求头中进行传输) 直接在下框中输入Bearer {token}（注意两者之间是一个空格）",
                 Name = "Authorization",     //jwt默认的参数名称
-                In = "header",        //jwt默认存放Authorization信息的位置（请求头中）
-                Type = "apiKey"
+                In = ParameterLocation.Header,        //jwt默认存放Authorization信息的位置（请求头中）
+                Type = SecuritySchemeType.ApiKey
             });
         }
     }

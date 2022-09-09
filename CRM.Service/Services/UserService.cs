@@ -13,6 +13,7 @@ using SqlSugar;
 using System.Linq.Expressions;
 using CRM.Core.Attributes;
 using CRM.Model.ViewPageModels;
+using CRM.Core.Helpers;
 
 namespace CRM.Service.Services
 {

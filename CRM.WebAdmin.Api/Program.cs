@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
 
@@ -15,17 +17,24 @@ namespace CRM.WebAdmin.Api
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+            //添加Autofac服务工厂，实现依赖注入
+            .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder
+                .UseUrls("http://localhost:5000")
                 .UseStartup<Startup>()
-                .ConfigureLogging(logging =>
+                .ConfigureLogging((hostingContext, builder) =>
                 {
-                    logging.ClearProviders();       //移除已经注册的其他日志处理程序
-                    logging.SetMinimumLevel(LogLevel.Trace);        //设置最小日志级别
+                    builder.ClearProviders();
+                    builder.SetMinimumLevel(LogLevel.Trace);
                 })
                 .UseNLog();
+            });
     }
 }

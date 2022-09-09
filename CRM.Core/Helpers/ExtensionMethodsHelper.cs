@@ -160,6 +160,17 @@ namespace CRM.Core.Helpers
         #region 逻辑判段的扩展方法
 
         /// <summary>
+        /// 忽略大小写
+        /// </summary>
+        /// <param name="thisValue"></param>
+        /// <param name="inValue"></param>
+        /// <returns></returns>
+        public static bool EqualsByOIC(this string thisValue, string inValue)
+        {
+            return thisValue.Equals(inValue, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
         /// 值在的范围？
         /// </summary>
         /// <param name="thisValue"></param>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
 using AutoMapper;
 using CRM.Core.Filters;
 using CRM.Core.Helpers;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -29,18 +31,21 @@ namespace CRM.WebAdmin.Api
 {
     public class Startup
     {
+        //承载注入实现的对象 IConfiguration
+        public IConfiguration Configuration { get; }
+
         //构造函数 Startup  Core的核心是依赖注入  所以要有构造函数进行注入 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
-            #region 2019.04.10      Rui     获取appsettings.json中自定义节点AppSettings的配置文件
+            #region     获取appsettings.json中自定义节点AppSettings的配置文件
 
             AppSettingsHelper.SetSection(Configuration.GetSection("AppSettings"));
 
             #endregion
 
-            #region 2019.06.11      Rui     初始化CsRedis Sdk服务
+            #region     初始化CsRedis Sdk服务
 
             if (ConfigsHelper.GetRedisCacheEnabled())
             {
@@ -50,15 +55,21 @@ namespace CRM.WebAdmin.Api
             #endregion
         }
 
-        //承载注入实现的对象 IConfiguration
-        public IConfiguration Configuration { get; }
-
         //添加服务的方法 ConfigureServices，主要实现了依赖注入(DI)的配置
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            //注册Mvc到Container
-            services.AddMvc(options =>
+            /*
+             * 在 netcore 3.0 中，官方对 mvc 服务做了细分，主要有以下几个部分：
+             * services.AddMvc();   //我们平时2.2使用的，最全面的mvc服务注册
+             * services.AddMvcCore();   //稍微精简的mvc注册
+             * services.AddControllers();   //适用于api的mvc部分服务注册
+             * services.AddControllersWithViews();  //含有api和view的部分服务注册
+             * services.AddRazorPages();    //razor服务注册
+             */
+
+            //注册到Container中
+            services.AddControllers(options =>
             {
                 //路由参数在此处仍然是有效的，比如添加一个版本号，不需要可以注释
                 //options.UseCentralRoutePrefix(new RouteAttribute("v1"));
@@ -67,25 +78,30 @@ namespace CRM.WebAdmin.Api
                 options.Filters.Add(typeof(GlobalActionsFilter));
                 //注入全局异常捕获过滤器
                 options.Filters.Add(typeof(GlobalExceptionsFilter));
-
-                //Json序列化配置
-                var serializerSettings = new JsonSerializerSettings();
-
-                //取消默认驼峰
-                serializerSettings.ContractResolver = new DefaultContractResolver();
-                //格式化DateTime类型
-                serializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-                //统一处理 webapi 返回null 转为“”
-                options.OutputFormatters.Insert(0, new JsonOutputFormatterHelper(serializerSettings));
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddNewtonsoftJson(options =>
+            {
+                //忽略循环引用
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                //修改属性名称的序列化方式，首字母小写(属性输出为 小驼峰)
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                //数据格式按原样输出，此选项开启默认属性输出（如果使用这个，需要关闭 NullToEmptyStringResolver）
+                //options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                //统一处理 webapi 返回null 转为“”（使用这个自定义的，默认属性输出为 小驼峰）
+                options.SerializerSettings.ContractResolver = new NullToEmptyStringResolver();
+                //格式化DateTime类型
+                options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+                //忽略Model中为null的属性
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Latest)
             .ConfigureApiBehaviorOptions(options =>
             {
                 //关闭默认自带的400模型验证 [ApiController]
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-            #region 2019.08.11      Rui     部分服务注入，netcore自带方法
+            #region     部分服务注入，netcore自带方法
 
             //内存缓存注入
             services.AddScoped<IMemoryCacheExtension, MemoryCacheExtension>();
@@ -97,7 +113,7 @@ namespace CRM.WebAdmin.Api
 
             #endregion
 
-            #region 2019.06.14      Rui     CORS跨域配置，声明策略
+            #region     CORS跨域配置，声明策略
 
             //声明策略，记得下边app中配置
             services.AddCors(x =>
@@ -137,13 +153,13 @@ namespace CRM.WebAdmin.Api
 
             #endregion
 
-            #region 2018.11.11      Rui     添加Swagger自定义配置
+            #region     添加Swagger自定义配置
 
             services.AddSwaggerGenCRM();
 
             #endregion
 
-            #region 2018.12.11      Rui     Token服务注册
+            #region     Token服务注册
 
             services.AddSingleton<IMemoryCache>(factory =>
             {
@@ -159,30 +175,29 @@ namespace CRM.WebAdmin.Api
 
             #endregion
 
-            #region 2020.03.08      Rui     AutoMapper注入
+            #region     AutoMapper注入
 
             services.AddAutoMapper(typeof(AutoMapperConfig));
             AutoMapperConfig.RegisterMappings();
 
             #endregion
 
-            #region 2020.03.15      Rui     SqlSugarClient注入
+            #region     SqlSugarClient注入
 
             services.AddSqlsugarSetup();
 
             #endregion
+        }
 
-            #region 2019.05.27      Rui     依赖注入Autofac
-
-            //让Autofac接管Starup中的ConfigureServices方法，记得修改返回类型IServiceProvider
-            return services.AddAutofacCRM();
-
-            #endregion
+        //注意在Program.CreateHostBuilder，添加Autofac服务工厂
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new AutofacModuleRegister());
         }
 
         //主要是http处理管道配置和一些系统配置
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -198,7 +213,10 @@ namespace CRM.WebAdmin.Api
                 //app.UseHsts();
             }
 
-            #region 2019.06.14      Rui     使用CORS中间件
+            //Routing
+            app.UseRouting();
+
+            #region     使用CORS中间件
 
             //跨域第一种方法
             //app.UseCors(options => options.WithOrigins("http://localhost:8021").AllowAnyHeader().AllowAnyMethod());
@@ -208,7 +226,7 @@ namespace CRM.WebAdmin.Api
 
             #endregion
 
-            #region 2018.11.11      Rui     使用Swagger中间件
+            #region     使用Swagger中间件
 
             app.UseSwagger();
             app.UseSwaggerUI(option =>
@@ -222,7 +240,7 @@ namespace CRM.WebAdmin.Api
 
             #endregion
 
-            #region 2020.03.13      Rui     使用请求响应日志记录中间件
+            #region     使用请求响应日志记录中间件
 
             app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
@@ -231,8 +249,11 @@ namespace CRM.WebAdmin.Api
             //使用状态错误码中间件，把错误码返回前台，比如是404
             app.UseStatusCodePages();
 
-            //使用Mvc中间件
-            app.UseMvc();
+            //短路中间件，配置Controller路由
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

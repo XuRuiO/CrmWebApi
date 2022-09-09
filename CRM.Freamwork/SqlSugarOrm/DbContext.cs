@@ -29,7 +29,6 @@ namespace CRM.Freamwork.SqlSugarOrm
                     DbType = DbType.SqlServer,      //数据库类型
                     IsAutoCloseConnection = true,     //(默认false)是否自动释放数据库，设为true我们不需要close或者Using的操作，比较推荐
                     InitKeyType = InitKeyType.Attribute,    //默认SystemTable：从数据库系统表查询；Attribute：不受数据库限制通过实体特性读取
-                    IsShardSameThread = true,     //设为true相同线程是同一个SqlConnection
                     MoreSettings = new ConnMoreSettings
                     {
                         IsAutoRemoveDataCache = true,        //为true表示可以自动删除二级缓存

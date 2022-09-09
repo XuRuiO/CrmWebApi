@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
+﻿using CRM.Core.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -44,19 +44,18 @@ namespace CRM.Core.Middlewares
             data.Add("request.executeStartTime", DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 
             // 获取请求body内容
-            if (request.Method.ToLower().Equals("post"))
+            if (request.Method.ToLower().EqualsByOIC("post"))
             {
                 // 启用倒带功能，就可以让 Request.Body 可以再次读取
-                request.EnableRewind();
+                request.EnableBuffering();
 
-                Stream stream = request.Body;
-                byte[] buffer = new byte[request.ContentLength.Value];
-                stream.Read(buffer, 0, buffer.Length);
-                data.Add("request.body", Encoding.UTF8.GetString(buffer));
-
+                // 升级3.0以上，不允许同步操作，必须异步
+                using var reader = new StreamReader(request.Body, Encoding.UTF8);
+                var body = await reader.ReadToEndAsync();
+                data.Add("request.body", body);
                 request.Body.Position = 0;
             }
-            else if (request.Method.ToLower().Equals("get"))
+            else if (request.Method.ToLower().EqualsByOIC("get"))
             {
                 data.Add("request.body", request.QueryString.Value);
             }
