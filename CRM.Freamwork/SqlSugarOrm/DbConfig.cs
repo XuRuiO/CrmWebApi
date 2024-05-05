@@ -6,7 +6,7 @@ using System.Text;
 namespace CRM.Freamwork.SqlSugarOrm
 {
     /// <summary>
-    /// 2020.01.01      获取数据库连接字符串
+    /// 获取数据库连接字符串
     /// </summary>
     public class DbConfig
     {

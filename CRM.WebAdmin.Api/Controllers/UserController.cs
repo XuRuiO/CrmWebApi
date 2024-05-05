@@ -34,7 +34,7 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <param name="addInput"></param>
         /// <returns></returns>
         [HttpPost("AddUsers")]
-        public async Task<(bool result, string message)> AddUsers([FromBody]UserAddRequest addRequest)
+        public async Task<(bool result, string message)> AddUsers([FromBody] UserAddRequest addRequest)
         {
             var result = await userService.AddUsersAsync(addRequest);
 
@@ -47,7 +47,7 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <param name="addInputs"></param>
         /// <returns></returns>
         [HttpPost("AddListUsers")]
-        public async Task<(bool result, string message)> AddListUsers([FromBody]List<UserAddRequest> addRequests)
+        public async Task<(bool result, string message)> AddListUsers([FromBody] List<UserAddRequest> addRequests)
         {
             var result = await userService.AddListUsersAsync(addRequests);
 
@@ -55,11 +55,11 @@ namespace CRM.WebAdmin.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<Result<BasePageModel<User>>> GetListPage(string name = "徐")
+        public async Task<ResultBasic<BasePageModel<User>>> GetListPage(string name = "徐")
         {
             var result = await userService.GetListPage(name);
 
-            return Success("请求成功！", result);
+            return ResultBasic.WithSuccess(result, "请求成功！");
         }
     }
 }

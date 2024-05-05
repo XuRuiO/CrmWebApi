@@ -5,43 +5,262 @@ using System.Text;
 
 namespace CRM.Core.Models
 {
-    /// <summary>
-    /// 有返回值
-    /// </summary>
-    /// <typeparam name="T">需要返回的泛型数据</typeparam>
-    public struct Result<T>
+    public interface IResult
+    {
+        bool Success { get; set; }
+
+        string Message { get; set; }
+    }
+
+    public interface IResult<T>
+    {
+        bool Success { get; set; }
+
+        string Message { get; set; }
+
+        T Data { get; set; }
+    }
+
+    public class ResultBasic : IResult
     {
         /// <summary>
-        /// 返回状态码
+        /// 是否成功
         /// </summary>
-        public int StatusCode { get; set; }
+        public bool Success { get; set; }
 
         /// <summary>
-        /// 返回信息
+        /// 消息
         /// </summary>
         public string Message { get; set; }
 
         /// <summary>
-        /// 返回数据
+        /// 状态码
         /// </summary>
+        public int StatusCode { get; set; }
+
+        /// <summary>
+        /// 时间
+        /// </summary>
+        public DateTime TimeStamp { get; set; }
+
+        public const int SuccessCode = (int)ApiResponseStatusCode.Success;
+
+        public const int ErrorCode = (int)ApiResponseStatusCode.UnExpectError;
+
+        public static ResultBasic WithError()
+        {
+            return new ResultBasic
+            {
+                Success = false,
+                Message = string.Empty,
+                StatusCode = ErrorCode,
+                TimeStamp = DateTime.Now
+            };
+        }
+
+        public static ResultBasic WithError(string message)
+        {
+            return new ResultBasic
+            {
+                Success = false,
+                Message = message,
+                StatusCode = ErrorCode,
+                TimeStamp = DateTime.Now
+            };
+        }
+
+        public static ResultBasic WithError(int statusCode)
+        {
+            return new ResultBasic
+            {
+                Success = false,
+                Message = string.Empty,
+                StatusCode = statusCode,
+                TimeStamp = DateTime.Now
+            };
+        }
+
+        public static ResultBasic WithError(int statusCode, string message)
+        {
+            return new ResultBasic
+            {
+                Success = false,
+                Message = message,
+                StatusCode = statusCode,
+                TimeStamp = DateTime.Now
+            };
+        }
+
+        public static ResultBasic<T> WithError<T>(string message)
+        {
+            return new ResultBasic<T>
+            {
+                Success = false,
+                Message = message,
+                StatusCode = ErrorCode,
+                TimeStamp = DateTime.Now,
+            };
+        }
+
+        public static ResultBasic<T> WithError<T>(int statusCode, string message)
+        {
+            return new ResultBasic<T>
+            {
+                Success = false,
+                Message = message,
+                StatusCode = statusCode,
+                TimeStamp = DateTime.Now
+            };
+        }
+
+        public static ResultBasic<T> WithError<T>(T data, string message)
+        {
+            return new ResultBasic<T>
+            {
+                Success = false,
+                Message = message,
+                StatusCode = ErrorCode,
+                TimeStamp = DateTime.Now,
+                Data = data
+            };
+        }
+
+        public static ResultBasic<T> WithError<T>(T data, int statusCode, string message)
+        {
+            return new ResultBasic<T>
+            {
+                Success = false,
+                Message = message,
+                StatusCode = statusCode,
+                TimeStamp = DateTime.Now,
+                Data = data
+            };
+        }
+
+        public static ResultBasic WithSuccess()
+        {
+            return new ResultBasic
+            {
+                Success = true,
+                Message = string.Empty,
+                StatusCode = SuccessCode,
+                TimeStamp = DateTime.Now
+            };
+        }
+
+        public static ResultBasic WithSuccess(string message)
+        {
+            return new ResultBasic
+            {
+                Success = true,
+                Message = message,
+                StatusCode = SuccessCode,
+                TimeStamp = DateTime.Now
+            };
+        }
+
+        public static ResultBasic WithSuccess(int statusCode, string message)
+        {
+            return new ResultBasic
+            {
+                Success = true,
+                Message = message,
+                StatusCode = statusCode,
+                TimeStamp = DateTime.Now
+            };
+        }
+
+        public static ResultBasic<T> WithSuccess<T>(T data)
+        {
+            return new ResultBasic<T>
+            {
+                Success = true,
+                Message = string.Empty,
+                StatusCode = SuccessCode,
+                TimeStamp = DateTime.Now,
+                Data = data
+            };
+        }
+
+        public static ResultBasic<T> WithSuccess<T>(T data, string message)
+        {
+            return new ResultBasic<T>
+            {
+                Success = true,
+                Message = message,
+                StatusCode = SuccessCode,
+                TimeStamp = DateTime.Now,
+                Data = data
+            };
+        }
+
+        public static ResultBasic<T> WithSuccess<T>(T data, int statusCode, string message)
+        {
+            return new ResultBasic<T>
+            {
+                Success = true,
+                Message = message,
+                StatusCode = statusCode,
+                TimeStamp = DateTime.Now,
+                Data = data
+            };
+        }
+    }
+
+    public class ResultBasic<T> : ResultBasic, IResult<T>
+    {
         public T Data { get; set; }
     }
 
-    /// <summary>
-    /// 无返回值
-    /// </summary>
-    public struct VoidResult
-    {
-        /// <summary>
-        /// 返回状态码
-        /// </summary>
-        public int StatusCode { get; set; }
 
-        /// <summary>
-        /// 返回信息
-        /// </summary>
-        public string Message { get; set; }
-    }
+
+
+
+
+
+
+
+
+
+
+
+    ///// <summary>
+    ///// 有返回值
+    ///// </summary>
+    ///// <typeparam name="T">需要返回的泛型数据</typeparam>
+    //public struct Result<T>
+    //{
+    //    /// <summary>
+    //    /// 返回状态码
+    //    /// </summary>
+    //    public int StatusCode { get; set; }
+
+    //    /// <summary>
+    //    /// 返回信息
+    //    /// </summary>
+    //    public string Message { get; set; }
+
+    //    /// <summary>
+    //    /// 返回数据
+    //    /// </summary>
+    //    public T Data { get; set; }
+    //}
+
+    ///// <summary>
+    ///// 无返回值
+    ///// </summary>
+    //public struct VoidResult
+    //{
+    //    /// <summary>
+    //    /// 返回状态码
+    //    /// </summary>
+    //    public int StatusCode { get; set; }
+
+    //    /// <summary>
+    //    /// 返回信息
+    //    /// </summary>
+    //    public string Message { get; set; }
+    //}
 
     /// <summary>
     /// 返回状态码
@@ -87,7 +306,7 @@ namespace CRM.Core.Models
         /// <summary>
         /// HTTP请求不合法,请求参数可能被篡改
         /// </summary>
-        [Description("HTTP请求不合法,请求参数可能被篡改")]
+        [Description("HTTP请求不合法，请求参数可能被篡改")]
         HttpRequestError = 406,
 
         /// <summary>

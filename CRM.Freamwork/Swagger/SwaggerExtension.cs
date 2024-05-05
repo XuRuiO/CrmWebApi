@@ -8,7 +8,7 @@ using System.IO;
 namespace CRM.Freamwork.Swagger
 {
     /// <summary>
-    /// 2018.10.22    Rui       Swagger 自定义配置
+    /// Swagger 自定义配置
     /// </summary>
     public static class SwaggerExtension
     {
@@ -17,7 +17,7 @@ namespace CRM.Freamwork.Swagger
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddSwaggerGenCRM(this IServiceCollection services)
+        public static IServiceCollection AddSwaggerSetup(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
             {
@@ -53,7 +53,7 @@ namespace CRM.Freamwork.Swagger
         /// 添加生成Swagger文档注释功能
         /// </summary>
         /// <param name="options"></param>
-        public static void AddDocumentAnnotation(this SwaggerGenOptions options)
+        private static void AddDocumentAnnotation(this SwaggerGenOptions options)
         {
             var basePath = AppContext.BaseDirectory;
             //var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
@@ -72,7 +72,7 @@ namespace CRM.Freamwork.Swagger
         /// 添加header验证信息
         /// </summary>
         /// <param name="options"></param>
-        public static void AddHeaderValidate(this SwaggerGenOptions options)
+        private static void AddHeaderValidate(this SwaggerGenOptions options)
         {
             //方案名称“CRM.Core”可自定义，上下一致即可
             //注意：自定义的认证中间件，我们的Token可以不用带 Bearer 特定字符串（即不需要此格式：Bearer {token} ）;

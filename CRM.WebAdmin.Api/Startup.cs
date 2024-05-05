@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
-using AutoMapper;
 using CRM.Core.Filters;
 using CRM.Core.Helpers;
 using CRM.Core.Middlewares;
+using CRM.Freamwork.Authorization;
 using CRM.Freamwork.Autofac;
+using CRM.Freamwork.AutoMapper;
 using CRM.Freamwork.Cache.MemoryCache;
 using CRM.Freamwork.Cache.RedisCache;
 using CRM.Freamwork.GlobalRouting;
 using CRM.Freamwork.SqlSugarOrm;
 using CRM.Freamwork.Swagger;
-using CRM.Model.AutoMapping;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -119,33 +119,20 @@ namespace CRM.WebAdmin.Api
             services.AddCors(x =>
             {
                 //方法一
-                //↓↓↓↓↓↓↓注意正式环境不要使用这种全开放的处理↓↓↓↓↓↓↓↓↓↓
-                //x.AddPolicy("AllRequests", policy =>
-                //{
-                //    policy
-                //    .AllowAnyOrigin()//允许任何源
-                //    .AllowAnyMethod()//允许任何方式
-                //    .AllowAnyHeader()//允许任何头
-                //    .AllowCredentials();//允许cookie
-                //});
-                //↑↑↑↑↑↑↑注意正式环境不要使用这种全开放的处理↑↑↑↑↑↑↑↑↑↑
-
-                //方法二，一般采用这种方法
-
                 //允许所有请求跨域（正式环境不要开放，仅限于测试环境多人测试）
-                //x.AddPolicy("LimitRequests", policy =>
+                //x.AddPolicy("AllRequests", policy =>
                 //{
                 //    policy
                 //    .AllowAnyOrigin()   //允许任何源
                 //    .AllowAnyMethod()   //允许任何方式
-                //    .AllowAnyHeader()   //允许任何头
-                //    .AllowCredentials();    //允许cookie
+                //    .AllowAnyHeader();   //允许任何头
                 //});
 
+                //方法二：一般采用这种方法
                 x.AddPolicy("LimitRequests", policy =>
                 {
                     policy
-                    .WithOrigins("http://127.0.0.1:1002", "http://localhost:1002", "http://127.0.0.1:40354")   //支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
+                    .WithOrigins("http://127.0.0.1:1002", "http://localhost:1003", "http://127.0.0.1:40354")   //支持多个域名端口，注意端口号后不要带/斜杆：比如localhost:8000/，是错的
                     .AllowAnyHeader()
                     .AllowAnyMethod();
                 });
@@ -153,32 +140,21 @@ namespace CRM.WebAdmin.Api
 
             #endregion
 
-            #region     添加Swagger自定义配置
+            #region     Swagger注入
 
-            services.AddSwaggerGenCRM();
+            services.AddSwaggerSetup();
 
             #endregion
 
-            #region     Token服务注册
+            #region     授权+认证注入
 
-            services.AddSingleton<IMemoryCache>(factory =>
-            {
-                var cache = new MemoryCache(new MemoryCacheOptions());
-                return cache;
-            });
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Client", policy => policy.RequireRole("Client").Build());
-                options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
-                options.AddPolicy("AdminOrClient", policy => policy.RequireRole("Admin,Client").Build());
-            });
+            services.AddAuthorizationSetup();
 
             #endregion
 
             #region     AutoMapper注入
 
-            services.AddAutoMapper(typeof(AutoMapperConfig));
-            AutoMapperConfig.RegisterMappings();
+            services.AddAutoMapperSetup();
 
             #endregion
 
@@ -219,7 +195,13 @@ namespace CRM.WebAdmin.Api
             #region     使用CORS中间件
 
             //跨域第一种方法
-            //app.UseCors(options => options.WithOrigins("http://localhost:8021").AllowAnyHeader().AllowAnyMethod());
+            //app.UseCors(options =>
+            //{
+            //    options
+            //    .WithOrigins("http://localhost:1002")
+            //    .AllowAnyHeader()
+            //    .AllowAnyMethod();
+            //});
 
             //跨域第二种方法，将 CORS 中间件添加到 web 应用程序管线中, 以允许跨域请求。
             app.UseCors("LimitRequests");

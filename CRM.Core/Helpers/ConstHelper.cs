@@ -5,10 +5,16 @@ using System.Text;
 namespace CRM.Core.Helpers
 {
     /// <summary>
-    /// 2020.03.02      Rui     常量帮助类，存放系统中所有的常量参数配置（经常会变动的配置文件，建议存放在appsettings.json中）
+    /// 常量帮助类，存放系统中所有的常量参数配置（经常会变动的配置文件，建议存放在appsettings.json中）
     /// </summary>
     public struct ConstHelper
     {
+        #region 认证与授权
+
+        public const string PermissionName = "Permission";
+
+        #endregion
+
         #region 微信小程序-基本常量配置
 
         /// <summary>

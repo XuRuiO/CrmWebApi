@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace CRM.Freamwork.Aop
 {
     /// <summary>
-    /// 2019.08.10      Rui     内存缓存Aop拦截器，继承接口IInterceptor
+    /// 内存缓存Aop拦截器，继承接口IInterceptor
     /// </summary>
     public class MemoryCacheAop : IInterceptor
     {

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -12,7 +13,7 @@ using System.Text.RegularExpressions;
 namespace CRM.Core.Helpers
 {
     /// <summary>
-    /// 2018.12.20      Rui     扩展方法帮助类
+    /// 扩展方法帮助类
     /// </summary>
     public static class ExtensionMethodsHelper
     {
@@ -181,6 +182,7 @@ namespace CRM.Core.Helpers
         {
             return thisValue >= begin && thisValue <= end;
         }
+
         /// <summary>
         /// 值在的范围？
         /// </summary>
@@ -229,6 +231,7 @@ namespace CRM.Core.Helpers
             if (thisValue == null) return thisValue.Length == 0;
             return thisValue.ToString() == "";
         }
+
         /// <summary>
         /// 是null或""?
         /// </summary>
@@ -238,6 +241,7 @@ namespace CRM.Core.Helpers
             if (thisValue == null) return true;
             return thisValue == Guid.Empty;
         }
+
         /// <summary>
         /// 是null或""?
         /// </summary>
@@ -246,25 +250,6 @@ namespace CRM.Core.Helpers
         {
             if (thisValue == null) return true;
             return thisValue == Guid.Empty;
-        }
-
-        /// <summary>
-        /// 有值?(与IsNullOrEmpty相反)
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsValuable(this object thisValue)
-        {
-            if (thisValue == null) return false;
-            return thisValue.ToString() != "";
-        }
-        /// <summary>
-        /// 有值?(与IsNullOrEmpty相反)
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsValuable(this IEnumerable<object> thisValue)
-        {
-            if (thisValue == null || thisValue.Count() == 0) return false;
-            return true;
         }
 
         /// <summary>
@@ -388,6 +373,52 @@ namespace CRM.Core.Helpers
             if (thisValue == null) return false;
             Regex reg = new Regex(pattern);
             return reg.IsMatch(thisValue.ToString());
+        }
+
+        #endregion
+
+        #region 集合的扩展方法
+
+        /// <summary>
+        /// 判断集合是否为空
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public static bool IsNullOrEmpty(this ICollection collection)
+        {
+            return collection == null || collection.Count == 0;
+        }
+
+        /// <summary>
+        /// 判断集合是否为空
+        /// </summary>
+        /// <param name="enumerable"></param>
+        /// <returns></returns>
+        public static bool IsNullOrEmpty(this IEnumerable enumerable)
+        {
+            if (enumerable == null)
+            {
+                return true;
+            }
+
+            IEnumerator enumerator = enumerable.GetEnumerator();
+            try
+            {
+                if (enumerator.MoveNext())
+                {
+                    _ = enumerator.Current;
+                    return false;
+                }
+            }
+            finally
+            {
+                if (enumerator is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+
+            return true;
         }
 
         #endregion

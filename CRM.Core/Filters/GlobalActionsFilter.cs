@@ -13,7 +13,7 @@ namespace CRM.Core.Filters
     /// <summary>
     /// 2020.03.12      Rui      全局方法过滤器
     /// </summary>
-    public class GlobalActionsFilter: ActionFilterAttribute
+    public class GlobalActionsFilter : ActionFilterAttribute
     {
         //Action之前执行
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -21,7 +21,7 @@ namespace CRM.Core.Filters
             if (!context.ModelState.IsValid)
             {
                 //定义无返回值的错误信息描述
-                var response = new VoidResult { StatusCode = (int)ApiResponseStatusCode.ParameterError };
+                var response = ResultBasic.WithError((int)ApiResponseStatusCode.ParameterError);
 
                 foreach (var item in context.ModelState.Values)
                 {
@@ -36,8 +36,10 @@ namespace CRM.Core.Filters
                 }
 
                 //Json序列化配置，取消默认驼峰
-                var serializerSettings = new JsonSerializerSettings();
-                serializerSettings.ContractResolver = new DefaultContractResolver();
+                var serializerSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new DefaultContractResolver()
+                };
 
                 context.Result = new JsonResult(response, serializerSettings);
             }

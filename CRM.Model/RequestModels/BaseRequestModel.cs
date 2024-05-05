@@ -11,7 +11,7 @@ namespace CRM.Model.RequestModels
     public class BaseRequestModel
     {
         /// <summary>
-        /// 请求接口的移动端类型：1（Ios），2（Android），3（WeChat）,4（PC）
+        /// 请求接口的移动端类型：1（Ios），2（Android），3（WeChat），4（PC）
         /// </summary>
         [Required(ErrorMessage = "请求接口的移动端类型不能为空")]
         public int TerminalType { get; set; }

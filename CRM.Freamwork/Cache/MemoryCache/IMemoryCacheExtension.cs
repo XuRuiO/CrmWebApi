@@ -5,7 +5,7 @@ using System.Text;
 namespace CRM.Freamwork.Cache.MemoryCache
 {
     /// <summary>
-    /// 2019.08.10      Rui     MemoryCache（内存缓存）的接口定义
+    /// MemoryCache（内存缓存）的接口定义
     /// 方法定义的比较少，需要的话，可以在加
     /// </summary>
     public interface IMemoryCacheExtension

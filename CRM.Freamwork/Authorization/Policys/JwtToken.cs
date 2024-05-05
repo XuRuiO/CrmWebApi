@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CRM.Model.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,7 +18,7 @@ namespace CRM.Freamwork.Authorization.Policys
         /// <param name="claims">需要在登陆的时候配置</param>
         /// <param name="permissionRequirement">在Startup中定义的参数</param>
         /// <returns></returns>
-        public static string BuildJwtToken(Claim[] claims, PermissionRequirement permissionRequirement)
+        public static TokenInfoView BuildJwtToken(UserInfoView userInfoView, PermissionRequirement permissionRequirement)
         {
             var now = DateTime.Now;
 
@@ -25,7 +26,7 @@ namespace CRM.Freamwork.Authorization.Policys
             var jwt = new JwtSecurityToken(
                 issuer: permissionRequirement.Issuer,       //jwt的签发者
                 audience: permissionRequirement.Audience,       //接收jwt的一方
-                claims: claims,
+                                                                //claims: claims,
                 notBefore: now,     //生效时间，定义在什么时间之前，该jwt都是不可用的
                 expires: now.Add(permissionRequirement.Expiration),     //jwt的过期时间，这个过期时间必须要大于签发时间（注意JWT有自己的缓冲过期时间）
                 signingCredentials: permissionRequirement.SigningCredentials        //jwt加密的密钥
@@ -34,7 +35,10 @@ namespace CRM.Freamwork.Authorization.Policys
             //生成JwtToken
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            return encodedJwt;
+            return new TokenInfoView
+            {
+                Token = encodedJwt
+            };
         }
     }
 }

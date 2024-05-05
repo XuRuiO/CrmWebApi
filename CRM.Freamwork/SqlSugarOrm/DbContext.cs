@@ -1,4 +1,4 @@
-﻿using CRM.Core;
+﻿using CRM.Core.Enums;
 using CRM.Core.Helpers;
 using SqlSugar;
 using System;
@@ -9,7 +9,7 @@ using System.Text;
 namespace CRM.Freamwork.SqlSugarOrm
 {
     /// <summary>
-    /// 2020.01.01     SqlSugarOrm 数据库上下文对象
+    /// SqlSugarOrm 数据库上下文对象
     /// </summary>
     public class DbContext
     {
@@ -41,7 +41,7 @@ namespace CRM.Freamwork.SqlSugarOrm
                 {
                     FilterValue = filterDb =>
                     {
-                        return new SqlFilterResult() { Sql = $"Enabled={(int)Enums.TableEnabled.启用} AND Deleted={(int)Enums.TableDeleted.未删除}" };
+                        return new SqlFilterResult() { Sql = $"Enabled={(int)Enums.EnabledEnum.启用} AND Deleted={(int)Enums.DeletedEnum.未删除}" };
                     },
                     IsJoinQuery = false
                 });

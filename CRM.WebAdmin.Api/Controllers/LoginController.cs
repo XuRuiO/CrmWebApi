@@ -8,6 +8,7 @@ using CRM.Core.Models;
 using CRM.Core.ThirdPartyHelper;
 using CRM.Freamwork;
 using CRM.IService.IServices;
+using CRM.Model.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRM.WebAdmin.Api.Controllers
@@ -34,7 +35,7 @@ namespace CRM.WebAdmin.Api.Controllers
         /// <param name="password">密码</param>
         /// <returns></returns>
         [HttpPost("Login")]
-        public async Task<Result<string>> Login(string userName, string password)
+        public async Task<ResultBasic<TokenInfoView>> Login(string userName, string password)
         {
             #region 数据验证
 
@@ -54,11 +55,11 @@ namespace CRM.WebAdmin.Api.Controllers
 
             if (!result.result)
             {
-                return Error<string>((int)ApiResponseStatusCode.ParameterError, result.message);
+                return ResultBasic.WithError<TokenInfoView>((int)ApiResponseStatusCode.UnExpectError, result.message);
             }
             else
             {
-                return Success<string>(result.message, Guid.NewGuid().ToString());
+                return ResultBasic.WithSuccess(new TokenInfoView(), result.message);
             }
         }
     }

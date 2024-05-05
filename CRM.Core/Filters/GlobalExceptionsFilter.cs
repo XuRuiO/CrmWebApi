@@ -31,7 +31,7 @@ namespace CRM.Core.Filters
         public override void OnException(ExceptionContext context)
         {
             //定义无返回值的错误信息描述
-            var response = new VoidResult();
+            var response = ResultBasic.WithError();
 
             if (context.Exception is CustomerException exception)
             {
@@ -61,8 +61,10 @@ namespace CRM.Core.Filters
             }
 
             //Json序列化配置，取消默认驼峰
-            var serializerSettings = new JsonSerializerSettings();
-            serializerSettings.ContractResolver = new DefaultContractResolver();
+            var serializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver()
+            };
 
             //将异常信息返回
             context.Result = new JsonResult(response, serializerSettings);

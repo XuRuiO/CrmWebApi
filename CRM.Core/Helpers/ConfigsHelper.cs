@@ -70,7 +70,7 @@ namespace CRM.Core.Helpers
         /// <returns></returns>
         public static string GetJwtAudienceAud()
         {
-            return AppSettingsHelper.AppSetting("Audience:Audience");
+            return AppSettingsHelper.AppSetting("JWTConfig:Audience");
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace CRM.Core.Helpers
         /// <returns></returns>
         public static string GetJwtAudienceIssuer()
         {
-            return AppSettingsHelper.AppSetting("Audience:Issuer");
+            return AppSettingsHelper.AppSetting("JWTConfig:Issuer");
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace CRM.Core.Helpers
         /// <returns></returns>
         public static string GetJwtAudienceSecret()
         {
-            return AppSettingsHelper.AppSetting("Audience:Secret");
+            return AppSettingsHelper.AppSetting("JWTConfig:Secret");
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace CRM.Core.Helpers
         /// <returns></returns>
         public static int GetJwtAudienceAccessTokenExpiration()
         {
-            return AppSettingsHelper.AppSetting("Audience:AccessTokenExpiration").ObjToInt();
+            return AppSettingsHelper.AppSetting("JWTConfig:AccessTokenExpiration").ObjToInt();
         }
     }
 }

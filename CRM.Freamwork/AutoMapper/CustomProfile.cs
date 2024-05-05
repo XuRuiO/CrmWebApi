@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CRM.Model.AutoMapping
+namespace CRM.Freamwork.AutoMapper
 {
     /// <summary>
-    /// 2020.03.08      Rui      自定义配置映射的源数据,目标数据
+    /// 自定义配置映射的源数据，目标数据
     /// </summary>
     public class CustomProfile : Profile
     {

@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CRM.Model.AutoMapping
+namespace CRM.Freamwork.AutoMapper
 {
     /// <summary>
-    /// 2020.03.08      Rui      静态全局 AutoMapper 配置文件
+    /// 静态全局 AutoMapper 配置文件
     /// </summary>
     public class AutoMapperConfig
     {

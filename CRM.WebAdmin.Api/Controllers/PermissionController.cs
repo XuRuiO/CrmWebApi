@@ -30,11 +30,11 @@ namespace CRM.WebAdmin.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("GetMenuNavigationBarTree")]
-        public async Task<Result<List<MenuNavigationBarTreeView>>> GetMenuNavigationBarTree()
+        public async Task<ResultBasic<List<MenuNavigationBarTreeView>>> GetMenuNavigationBarTree()
         {
             var result = await permissionService.GetMenuNavigationBarTree();
 
-            return Success("请求成功", result);
+            return ResultBasic.WithSuccess(result, "请求成功");
         }
     }
 }

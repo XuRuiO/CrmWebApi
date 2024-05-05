@@ -6,7 +6,7 @@ using System.Text;
 namespace CRM.IRepository.IUnitOfWork
 {
     /// <summary>
-    /// 2020.03.15      Rui      重新设计SqlSugarClient，创建工作单元接口
+    /// 重新设计SqlSugarClient，创建工作单元接口
     /// </summary>
     public interface IUnitOfWork
     {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace CRM.Freamwork.Cache.MemoryCache
 {
     /// <summary>
-    /// 2019.08.10      Rui     MemoryCache（内存缓存）的接口实现
+    /// MemoryCache（内存缓存）的接口实现
     /// 方法定义的比较少，需要的话，可以在加
     /// </summary>
     public class MemoryCacheExtension : IMemoryCacheExtension

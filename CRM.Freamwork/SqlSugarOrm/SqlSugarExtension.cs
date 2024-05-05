@@ -7,7 +7,7 @@ using System.Text;
 namespace CRM.Freamwork.SqlSugarOrm
 {
     /// <summary>
-    /// 2020.03.15      SqlSugar扩展，需要在Startup服务启动
+    /// SqlSugar扩展，需要在Startup服务启动
     /// </summary>
     public static class SqlSugarExtension
     {
@@ -25,10 +25,10 @@ namespace CRM.Freamwork.SqlSugarOrm
                 //return DbContext.DB;
                 return new SqlSugar.SqlSugarClient(new SqlSugar.ConnectionConfig()
                 {
-                    ConnectionString = DbConfig.ConnectionString,//必填, 数据库连接字符串
-                    DbType = DbType.SqlServer,//必填, 数据库类型
-                    IsAutoCloseConnection = true,//默认false, 时候知道关闭数据库连接, 设置为true无需使用using或者Close操作
-                    InitKeyType = SqlSugar.InitKeyType.Attribute//默认SystemTable, 字段信息读取, 如：该属性是不是主键，标识列等等信息
+                    ConnectionString = DbConfig.ConnectionString,       //连接字符串
+                    DbType = DbType.SqlServer,      //数据库类型
+                    IsAutoCloseConnection = true,       //(默认false)是否自动释放数据库，设为true我们不需要close或者Using的操作，比较推荐
+                    InitKeyType = SqlSugar.InitKeyType.Attribute       //默认SystemTable：从数据库系统表查询；Attribute：不受数据库限制通过实体特性读取
                 });
             });
         }
